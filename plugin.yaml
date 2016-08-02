@@ -1,0 +1,18 @@
+##################################################################################
+# Cloudify Execution Plugin built in types and plugin definitions.
+##################################################################################
+
+plugins:
+    execution:
+        # In the cloudify execution plugin, the `executor` field could have
+        # been host_agent' without any change in behavior.
+        # Remember that an operation's `executor` value overrides the
+        # `executor` value of its plugin. When referencing the execution plugin
+        # in an operation, the dsl parser will deduce the appropriate value of
+        # the operation's `executor`, according to information on
+        # agent_config/install agent, and the operating system where we want
+        # the script to run.
+        executor: central_deployment_agent
+        source: https://github.com/cloudify-cosmo/cloudify-execution-plugin/archive/1.0.zip
+        package_name: cloudify-execution-plugin
+        package_version: '1.0'
