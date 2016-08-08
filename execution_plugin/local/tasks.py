@@ -31,16 +31,14 @@ from cloudify.workflows import ctx as workflows_ctx
 from cloudify.decorators import operation, workflow
 from cloudify.exceptions import NonRecoverableError
 
-
-from script_runner import constants
-from script_runner import eval_env
 from cloudify.proxy.client import CTX_SOCKET_URL
 
 from cloudify.proxy.server import (UnixCtxProxy,
                                    TCPCtxProxy,
                                    HTTPCtxProxy,
                                    StubCtxProxy)
-
+from execution_plugin import constants, utils
+from execution_plugin.local import eval_env
 
 try:
     import zmq  # noqa
@@ -52,14 +50,6 @@ try:
     from cloudify.proxy.client import ScriptException
 except ImportError:
     ScriptException = None
-
-
-ILLEGAL_CTX_OPERATION_ERROR = RuntimeError('ctx may only abort or return once')
-UNSUPPORTED_SCRIPT_FEATURE_ERROR = \
-    RuntimeError('ctx abort & retry commands are only supported in Cloudify '
-                 '3.4 or later')
-
-IS_WINDOWS = os.name == 'nt'
 
 
 @operation
@@ -92,7 +82,7 @@ def create_process_config(process, operation_kwargs):
         k = str(k)
         if isinstance(v, (dict, list, set, bool)):
             envvar_value = json.dumps(v)
-            if IS_WINDOWS:
+            if utils.is_windows():
                 # the windows shell removes all double quotes - escape them
                 # to still be able to pass JSON in env vars to the shell
                 envvar_value = envvar_value.replace('"', '\\"')
@@ -109,24 +99,28 @@ def process_execution(script_func, script_path, ctx, process=None):
 
     def abort_operation(message=None):
         if ctx._return_value is not None:
-            ctx._return_value = ILLEGAL_CTX_OPERATION_ERROR
+            ctx._return_value = RuntimeError(
+                constants.ILLEGAL_CTX_OPERATION_MESSAGE)
             raise ctx._return_value
         if ctx.is_script_exception_defined:
             ctx._return_value = ScriptException(message)
         else:
-            ctx._return_value = UNSUPPORTED_SCRIPT_FEATURE_ERROR
+            ctx._return_value = RuntimeError(
+                constants.UNSUPPORTED_SCRIPT_FEATURE_MESSAGE)
             raise ctx._return_value
         return ctx._return_value
 
     def retry_operation(message=None, retry_after=None):
         if ctx._return_value is not None:
-            ctx._return_value = ILLEGAL_CTX_OPERATION_ERROR
+            ctx._return_value = RuntimeError(
+                constants.ILLEGAL_CTX_OPERATION_MESSAGE)
             raise ctx._return_value
         if ctx.is_script_exception_defined:
             ctx._return_value = ScriptException(message, retry=True)
             ctx.operation.retry(message=message, retry_after=retry_after)
         else:
-            ctx._return_value = UNSUPPORTED_SCRIPT_FEATURE_ERROR
+            ctx._return_value = RuntimeError(
+                constants.UNSUPPORTED_SCRIPT_FEATURE_MESSAGE)
             raise ctx._return_value
         return ctx._return_value
 
@@ -135,7 +129,8 @@ def process_execution(script_func, script_path, ctx, process=None):
 
     def returns(value):
         if ctx._return_value is not None:
-            ctx._return_value = ILLEGAL_CTX_OPERATION_ERROR
+            ctx._return_value = RuntimeError(
+                constants.ILLEGAL_CTX_OPERATION_MESSAGE)
             raise ctx._return_value
         ctx._return_value = value
     ctx.returns = returns
@@ -245,7 +240,7 @@ def start_ctx_proxy(ctx, process):
     ctx_proxy_type = process.get('ctx_proxy_type')
     if not ctx_proxy_type or ctx_proxy_type == 'auto':
         if HAS_ZMQ:
-            if IS_WINDOWS:
+            if utils.is_windows():
                 return TCPCtxProxy(ctx)
             else:
                 return UnixCtxProxy(ctx)

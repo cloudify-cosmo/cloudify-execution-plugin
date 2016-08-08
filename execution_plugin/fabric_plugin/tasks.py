@@ -36,6 +36,7 @@ from cloudify.proxy import client as proxy_client
 from cloudify.proxy import server as proxy_server
 from cloudify.exceptions import NonRecoverableError
 
+from execution_plugin import constants
 from fabric_plugin import tunnel
 from fabric_plugin import exec_env
 
@@ -45,31 +46,7 @@ except ImportError:
     ScriptException = None
 
 
-ILLEGAL_CTX_OPERATION_ERROR = RuntimeError('ctx may only abort or return once')
-UNSUPPORTED_SCRIPT_FEATURE_ERROR = \
-    RuntimeError('ctx abort & retry commands are only supported in Cloudify '
-                 '3.4 or later')
 
-DEFAULT_BASE_DIR = '/tmp/cloudify-ctx'
-
-FABRIC_ENV_DEFAULTS = {
-    'connection_attempts': 5,
-    'timeout': 10,
-    'forward_agent': False,
-    'abort_on_prompts': True,
-    'keepalive': 0,
-    'linewise': False,
-    'pool_size': 0,
-    'skip_bad_hosts': False,
-    'status': False,
-    'disable_known_hosts': True,
-    'combine_stderr': True,
-}
-
-# Very low level workaround used to support manager recovery
-# that is executed on a client different than the one used
-# to bootstrap
-CLOUDIFY_MANAGER_PRIVATE_KEY_PATH = 'CLOUDIFY_MANAGER_PRIVATE_KEY_PATH'
 
 
 @operation
@@ -144,7 +121,7 @@ def run_script(script_path,
     if not process:
         process = {}
     process = _create_process_config(process, kwargs)
-    base_dir = process.get('base_dir', DEFAULT_BASE_DIR)
+    base_dir = process.get('base_dir', constants.DEFAULT_BASE_DIR)
     ctx_server_port = process.get('ctx_server_port')
 
     proxy_client_path = proxy_client.__file__
@@ -201,25 +178,29 @@ def run_script(script_path,
 
         def abort_operation(message=None):
             if actual_ctx._return_value is not None:
-                actual_ctx._return_value = ILLEGAL_CTX_OPERATION_ERROR
+                actual_ctx._return_value = RuntimeError(
+                    constants.ILLEGAL_CTX_OPERATION_MESSAGE)
                 raise actual_ctx._return_value
             if actual_ctx.is_script_exception_defined:
                 actual_ctx._return_value = ScriptException(message)
             else:
-                actual_ctx._return_value = UNSUPPORTED_SCRIPT_FEATURE_ERROR
+                actual_ctx._return_value = RuntimeError(
+                    constants.UNSUPPORTED_SCRIPT_FEATURE_MESSAGE)
                 raise actual_ctx
             return actual_ctx._return_value
 
         def retry_operation(message=None, retry_after=None):
             if actual_ctx._return_value is not None:
-                actual_ctx._return_value = ILLEGAL_CTX_OPERATION_ERROR
+                actual_ctx._return_value = RuntimeError(
+                    constants.ILLEGAL_CTX_OPERATION_MESSAGE)
                 raise actual_ctx._return_value
             actual_ctx.operation.retry(message=message,
                                        retry_after=retry_after)
             if actual_ctx.is_script_exception_defined:
                 actual_ctx._return_value = ScriptException(message, retry=True)
             else:
-                actual_ctx._return_value = UNSUPPORTED_SCRIPT_FEATURE_ERROR
+                actual_ctx._return_value = RuntimeError(
+                    constants.UNSUPPORTED_SCRIPT_FEATURE_MESSAGE)
                 raise actual_ctx._return_value
             return actual_ctx._return_value
 
@@ -228,7 +209,8 @@ def run_script(script_path,
 
         def returns(_value):
             if actual_ctx._return_value is not None:
-                actual_ctx._return_value = ILLEGAL_CTX_OPERATION_ERROR
+                actual_ctx._return_value = RuntimeError(
+                    constants.ILLEGAL_CTX_OPERATION_MESSAGE)
                 raise actual_ctx._return_value
             actual_ctx._return_value = _value
         actual_ctx.returns = returns
@@ -465,8 +447,8 @@ class CredentialsHandler():
     def key_filename(self):
         """Returns the ssh key to use when connecting to the remote host"""
         self.logger.debug('Retrieving ssh key...')
-        if CLOUDIFY_MANAGER_PRIVATE_KEY_PATH in os.environ:
-            key = os.environ[CLOUDIFY_MANAGER_PRIVATE_KEY_PATH]
+        if constants.CLOUDIFY_MANAGER_PRIVATE_KEY_PATH in os.environ:
+            key = os.environ[constants.CLOUDIFY_MANAGER_PRIVATE_KEY_PATH]
         elif 'key_filename' not in self.fabric_env:
             if self.ctx.bootstrap_context.cloudify_agent.agent_key_path:
                 key = self.ctx.bootstrap_context.cloudify_agent.agent_key_path
@@ -507,7 +489,7 @@ def _fabric_env(fabric_env, warn_only):
     fabric_env = fabric_env or {}
     credentials = CredentialsHandler(ctx, fabric_env)
     final_env = {}
-    final_env.update(FABRIC_ENV_DEFAULTS)
+    final_env.update(constants.FABRIC_ENV_DEFAULTS)
     final_env.update(fabric_env)
     final_env.update({
         'host_string': credentials.host_string,
