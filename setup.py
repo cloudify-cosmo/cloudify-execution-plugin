@@ -21,7 +21,7 @@ setup(
     author='Gigaspaces',
     author_email='cosmo-admin@gigaspaces.com',
     packages=['fabric_plugin',
-              'script_runner',
+              'local',
               'ctx_proxy'],
     license='LICENSE',
     description='Plugin for running scripts locally and remotely, '

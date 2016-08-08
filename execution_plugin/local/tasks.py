@@ -25,20 +25,22 @@ import tempfile
 
 import requests
 
+
 from cloudify import ctx as operation_ctx
 from cloudify.workflows import ctx as workflows_ctx
 from cloudify.decorators import operation, workflow
 from cloudify.exceptions import NonRecoverableError
 
-from script_runner import eval_env
-from script_runner import constants
-from cloudify.proxy.client import CTX_SOCKET_URL
 
+from script_runner import constants
+from script_runner import eval_env
+from cloudify.proxy.client import CTX_SOCKET_URL
 
 from cloudify.proxy.server import (UnixCtxProxy,
                                    TCPCtxProxy,
                                    HTTPCtxProxy,
                                    StubCtxProxy)
+
 
 try:
     import zmq  # noqa
