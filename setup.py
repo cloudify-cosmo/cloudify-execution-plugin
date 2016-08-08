@@ -20,9 +20,7 @@ setup(
     version='1.0',
     author='Gigaspaces',
     author_email='cosmo-admin@gigaspaces.com',
-    packages=['fabric_plugin',
-              'local',
-              'ctx_proxy'],
+    packages=['execution_plugin'],
     license='LICENSE',
     description='Plugin for running scripts locally and remotely, '
                 'using fabric and winrm',
