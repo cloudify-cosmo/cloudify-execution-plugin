@@ -315,6 +315,7 @@ def get_script(download_resource_func, script_path):
 
 
 def _hide_output(groups):
+    """ Hides Fabric's output for every 'entity' in `groups` """
     possible_groups = (
         'status',
         'aborts',
