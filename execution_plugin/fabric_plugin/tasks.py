@@ -36,17 +36,13 @@ from cloudify.proxy import client as proxy_client
 from cloudify.proxy import server as proxy_server
 from cloudify.exceptions import NonRecoverableError
 
-from execution_plugin import constants
-from fabric_plugin import tunnel
-from fabric_plugin import exec_env
+from execution_plugin import constants, environment_globals
+from execution_plugin.fabric_plugin import tunnel
 
 try:
     from cloudify.proxy.client import ScriptException
 except ImportError:
     ScriptException = None
-
-
-
 
 
 @operation
@@ -388,7 +384,7 @@ def _get_task(tasks_file, task_name):
         raise exceptions.NonRecoverableError(
             "Could not get '{0}' ({1}: {2})".format(tasks_file,
                                                     type(e).__name__, e))
-    exec_globs = exec_env.exec_globals(tasks_file)
+    exec_globs = environment_globals.create_initial_globals(tasks_file)
     try:
         exec_(tasks_code, _globs_=exec_globs)
     except Exception as e:

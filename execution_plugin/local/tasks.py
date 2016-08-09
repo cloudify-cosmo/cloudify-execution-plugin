@@ -37,8 +37,7 @@ from cloudify.proxy.server import (UnixCtxProxy,
                                    TCPCtxProxy,
                                    HTTPCtxProxy,
                                    StubCtxProxy)
-from execution_plugin import constants, utils
-from execution_plugin.local import eval_env
+from execution_plugin import constants, environment_globals, utils
 
 try:
     import zmq  # noqa
@@ -268,7 +267,7 @@ def process_ctx_request(proxy):
 
 
 def eval_script(script_path, ctx, process=None):
-    eval_globals = eval_env.setup_env_and_globals(script_path)
+    eval_globals = environment_globals.create_initial_globals(script_path)
     execfile(script_path, eval_globals)
 
 
