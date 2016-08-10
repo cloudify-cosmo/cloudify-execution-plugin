@@ -31,10 +31,11 @@ from cloudify import ctx
 from cloudify import utils
 from cloudify import exceptions
 from cloudify.decorators import operation
-from cloudify.proxy.client import CTX_SOCKET_URL
-from cloudify.proxy import client as proxy_client
-from cloudify.proxy import server as proxy_server
 from cloudify.exceptions import NonRecoverableError
+
+from execution_plugin.ctx_proxy import client as ctx_proxy_client
+from execution_plugin.ctx_proxy.client import CTX_SOCKET_URL
+from execution_plugin.ctx_proxy import server as ctx_proxy_server
 
 from execution_plugin import constants, environment_globals
 from execution_plugin.fabric_plugin import tunnel
@@ -120,7 +121,7 @@ def run_script(script_path,
     base_dir = process.get('base_dir', constants.DEFAULT_BASE_DIR)
     ctx_server_port = process.get('ctx_server_port')
 
-    proxy_client_path = proxy_client.__file__
+    proxy_client_path = ctx_proxy_client.__file__
     if proxy_client_path.endswith('.pyc'):
         proxy_client_path = proxy_client_path[:-1]
     local_ctx_sh_path = os.path.join(_get_bin_dir(), 'ctx-sh')
@@ -268,7 +269,7 @@ def run_script(script_path,
         env_script.write('chmod +x {0}\n'.format(remote_script_path))
         env_script.write('chmod +x {0}\n'.format(remote_ctx_path))
         fabric_api.put(local_script_path, remote_script_path)
-        proxy = proxy_server.HTTPCtxProxy(actual_ctx, port=ctx_server_port)
+        proxy = ctx_proxy_server.HTTPCtxProxy(actual_ctx, port=ctx_server_port)
         try:
             with fabric_context.cd(cwd):
                 local_port = proxy.port

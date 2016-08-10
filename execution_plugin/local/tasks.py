@@ -31,13 +31,12 @@ from cloudify.workflows import ctx as workflows_ctx
 from cloudify.decorators import operation, workflow
 from cloudify.exceptions import NonRecoverableError
 
-from cloudify.proxy.client import CTX_SOCKET_URL
-
-from cloudify.proxy.server import (UnixCtxProxy,
-                                   TCPCtxProxy,
-                                   HTTPCtxProxy,
-                                   StubCtxProxy)
 from execution_plugin import constants, environment_globals, utils
+from execution_plugin.ctx_proxy.client import CTX_SOCKET_URL
+from execution_plugin.ctx_proxy.server import (UnixCtxProxy,
+                                               TCPCtxProxy,
+                                               HTTPCtxProxy,
+                                               StubCtxProxy)
 
 try:
     import zmq  # noqa
