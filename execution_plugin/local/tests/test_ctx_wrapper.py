@@ -25,7 +25,8 @@ import cloudify.ctx_wrappers
 from cloudify.exceptions import NonRecoverableError
 from cloudify.exceptions import OperationRetry
 from cloudify.workflows import local
-from script_runner.tasks import ProcessException, IS_WINDOWS
+from execution_plugin.local.tasks import ProcessException
+from execution_plugin.utils import is_windows
 
 BLUEPRINT_DIR = os.path.join(os.path.dirname(__file__), 'wrapper_blueprint')
 
@@ -86,7 +87,7 @@ class PythonWrapperTests(testtools.TestCase):
         else:
             env['PYTHONPATH'] = self.tempdir
 
-        if IS_WINDOWS:
+        if is_windows():
             process['command_prefix'] = 'python'
 
         inputs = {

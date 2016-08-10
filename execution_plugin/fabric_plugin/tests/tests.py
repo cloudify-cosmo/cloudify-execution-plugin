@@ -36,12 +36,18 @@ from cloudify.workflows import ctx as workflow_ctx
 from cloudify.exceptions import (NonRecoverableError,
                                  RecoverableError)
 
-from fabric_plugin import tasks
-from fabric_plugin.tasks import ILLEGAL_CTX_OPERATION_ERROR
+from execution_plugin.constants import (ILLEGAL_CTX_OPERATION_MESSAGE,
+                                        FABRIC_ENV_DEFAULTS,
+                                        DEFAULT_BASE_DIR,
+                                        CLOUDIFY_MANAGER_PRIVATE_KEY_PATH)
+
+
+
+from execution_plugin.fabric_plugin import tasks
 
 
 def _mock_requests_get(url):
-    from fabric_plugin.tests import blueprint
+    from execution_plugin.fabric_plugin.tests import blueprint
     path = url.split('http://localhost/')[1]
     basedir = os.path.dirname(blueprint.__file__)
     response = namedtuple('Response', 'text status_code')
@@ -300,7 +306,7 @@ class FabricPluginTest(BaseFabricPluginTest):
         self._execute('test.run_task',
                       task_name='task')
         self.assertEqual(self.mock.settings_merged['timeout'],
-                         tasks.FABRIC_ENV_DEFAULTS['timeout'])
+                         FABRIC_ENV_DEFAULTS['timeout'])
         # now override
         invocation_fabric_env = self.default_fabric_env.copy()
         invocation_fabric_env['timeout'] = 1000000
@@ -373,7 +379,7 @@ class FabricPluginTest(BaseFabricPluginTest):
 
     def test_env_var_key_filename(self):
         with patch.dict(os.environ, {
-                tasks.CLOUDIFY_MANAGER_PRIVATE_KEY_PATH: 'env_key_filename'}):
+                CLOUDIFY_MANAGER_PRIVATE_KEY_PATH: 'env_key_filename'}):
             self._execute('test.run_task',
                           task_name='task')
         self.assertEqual('env_key_filename',
@@ -511,8 +517,8 @@ class FabricPluginRealSSHTests(BaseFabricPluginTest):
 
         tasks.fabric_api = self.original_fabric_api
         with context_managers.settings(**self.default_fabric_env):
-            if files.exists(tasks.DEFAULT_BASE_DIR):
-                api.run('rm -rf {0}'.format(tasks.DEFAULT_BASE_DIR))
+            if files.exists(DEFAULT_BASE_DIR):
+                api.run('rm -rf {0}'.format(DEFAULT_BASE_DIR))
             if files.exists(self.CUSTOM_BASE_DIR):
                 api.run('rm -rf {0}'.format(self.CUSTOM_BASE_DIR))
 
@@ -568,7 +574,8 @@ class FabricPluginRealSSHTests(BaseFabricPluginTest):
     def test_run_script(self):
         self._test_run_script('scripts/script.sh')
 
-    @patch('fabric_plugin.tasks.requests.get', _mock_requests_get)
+    @patch('execution_plugin.fabric_plugin.tasks.requests.get',
+           _mock_requests_get)
     def test_run_script_from_url(self):
         self._test_run_script('http://localhost/scripts/script.sh')
 
@@ -596,7 +603,7 @@ class FabricPluginRealSSHTests(BaseFabricPluginTest):
                 },
             })
         instance = self.env.storage.get_node_instances()[0]
-        self.assertEqual('{0}/work'.format(tasks.DEFAULT_BASE_DIR),
+        self.assertEqual('{0}/work'.format(DEFAULT_BASE_DIR),
                          instance.runtime_properties['work_dir'])
 
     def test_run_script_process_config(self):
@@ -756,7 +763,7 @@ class FabricPluginRealSSHTests(BaseFabricPluginTest):
                     }
                 })
         except NonRecoverableError as e:
-            self.assertEquals(str(ILLEGAL_CTX_OPERATION_ERROR), str(e))
+            self.assertEquals(ILLEGAL_CTX_OPERATION_MESSAGE, str(e))
 
     def test_crash_return_after_abort(self):
         error_msg = 'oops_we_got_an_error'
@@ -772,7 +779,7 @@ class FabricPluginRealSSHTests(BaseFabricPluginTest):
                 })
             self.fail('expected to raise an exception')
         except NonRecoverableError as e:
-            self.assertEquals(str(ILLEGAL_CTX_OPERATION_ERROR), str(e))
+            self.assertEquals(ILLEGAL_CTX_OPERATION_MESSAGE, str(e))
 
     def test_run_script_abort(self):
         error_msg = 'oops_we_got_an_error'

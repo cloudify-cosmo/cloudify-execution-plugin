@@ -30,15 +30,14 @@ from cloudify.workflows import ctx as workflow_ctx
 from cloudify.mocks import MockCloudifyContext
 from cloudify.exceptions import (NonRecoverableError,
                                  RecoverableError)
-from cloudify.proxy.server import (UnixCtxProxy,
-                                   TCPCtxProxy,
-                                   HTTPCtxProxy,
-                                   StubCtxProxy)
+from execution_plugin.ctx_proxy.server import (UnixCtxProxy,
+                                               TCPCtxProxy,
+                                               HTTPCtxProxy,
+                                               StubCtxProxy)
 
-from script_runner import tasks
-from script_runner.tasks import ILLEGAL_CTX_OPERATION_ERROR
-
-IS_WINDOWS = os.name == 'nt'
+from execution_plugin.local import tasks
+from execution_plugin.constants import ILLEGAL_CTX_OPERATION_MESSAGE
+from execution_plugin.utils import is_windows
 
 
 @nottest
@@ -58,8 +57,8 @@ class TestScriptRunner(testtools.TestCase):
 
     def _create_script(self, linux_script, windows_script,
                        windows_suffix='.bat', linux_suffix=''):
-        suffix = windows_suffix if IS_WINDOWS else linux_suffix
-        script = windows_script if IS_WINDOWS else linux_script
+        suffix = windows_suffix if is_windows() else linux_suffix
+        script = windows_script if is_windows() else linux_script
         script_path = tempfile.mktemp(suffix=suffix)
         with open(script_path, 'w') as f:
             f.write(script)
@@ -177,7 +176,7 @@ class TestScriptRunner(testtools.TestCase):
             self._run(script_path=script_path, task_retries=2)
             self.fail()
         except NonRecoverableError as e:
-            self.assertEquals(e.message, str(ILLEGAL_CTX_OPERATION_ERROR))
+            self.assertEquals(e.message, ILLEGAL_CTX_OPERATION_MESSAGE)
         except Exception as e:
             self.fail()
 
@@ -257,7 +256,7 @@ class TestScriptRunner(testtools.TestCase):
             self._run(script_path=script_path, task_retries=2)
             self.fail()
         except NonRecoverableError as e:
-            self.assertEquals(e.message, str(ILLEGAL_CTX_OPERATION_ERROR))
+            self.assertEquals(e.message, ILLEGAL_CTX_OPERATION_MESSAGE)
         except Exception:
             self.fail()
 
@@ -275,7 +274,7 @@ class TestScriptRunner(testtools.TestCase):
             self._run(script_path=script_path, task_retries=2)
             self.fail()
         except NonRecoverableError as e:
-            self.assertEquals(e.message, str(ILLEGAL_CTX_OPERATION_ERROR))
+            self.assertEquals(e.message, ILLEGAL_CTX_OPERATION_MESSAGE)
         except Exception:
             self.fail()
 
@@ -367,7 +366,7 @@ subprocess.Popen(
             ctx instance runtime-properties map.key $env:TEST_KEY
             ''',
             windows_suffix='.ps1')
-        if IS_WINDOWS:
+        if is_windows():
             command_prefix = 'powershell'
         else:
             command_prefix = 'python'
@@ -418,7 +417,7 @@ subprocess.Popen(
             self._run(script_path=script_path)
             self.fail()
         except tasks.ProcessException as e:
-            expected_exit_code = 1 if IS_WINDOWS else 127
+            expected_exit_code = 1 if is_windows() else 127
 
             self.assertIn(os.path.basename(script_path), e.command)
             self.assertEqual(e.exit_code, expected_exit_code)
@@ -564,7 +563,7 @@ if __name__ == '__main__':
 class TestScriptRunnerUnixCtxProxy(TestScriptRunner):
 
     def setUp(self):
-        if IS_WINDOWS:
+        if is_windows():
             self.skipTest('Test skipped on windows')
         self.ctx_proxy_type = 'unix'
         super(TestScriptRunner, self).setUp()
@@ -595,7 +594,7 @@ class TestCtxProxyType(testtools.TestCase):
         self.assert_valid_ctx_proxy('tcp', TCPCtxProxy)
 
     def test_unix_ctx_type(self):
-        if IS_WINDOWS:
+        if is_windows():
             self.skipTest('Skipped on windows')
         self.assert_valid_ctx_proxy('unix', UnixCtxProxy)
 
@@ -614,7 +613,7 @@ class TestCtxProxyType(testtools.TestCase):
         self._test_auto_type(explicit=False)
 
     def _test_auto_type(self, explicit):
-        if IS_WINDOWS:
+        if is_windows():
             expected_type = TCPCtxProxy
         else:
             expected_type = UnixCtxProxy
