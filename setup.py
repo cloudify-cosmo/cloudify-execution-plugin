@@ -26,8 +26,8 @@ setup(
                 'using fabric and winrm',
     install_requires=[
         # TODO decide on plugins-common dependency (if any)
-        # TODO add winrm dependency?
         'fabric==1.8.3',
         'six>=1.8.0'
+        'pywinrm',
     ]
 )
