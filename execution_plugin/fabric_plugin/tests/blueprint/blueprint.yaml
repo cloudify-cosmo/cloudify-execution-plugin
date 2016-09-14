@@ -1,0 +1,69 @@
+tosca_definitions_version: cloudify_dsl_1_0
+
+inputs:
+    fabric_env:      {}
+    commands:        {}
+    task_name:       {}
+    tasks_file:      {}
+    script_path:     {}
+    process:         {}
+    task_properties: {}
+    task_mapping:    {}
+    ip:              {}
+    custom_input:
+        default: value
+    use_sudo:        {}
+    hide_output:     {}
+
+node_templates:
+    test:
+        type: cloudify.nodes.Compute
+        properties:
+            ip: { get_input: ip }
+        interfaces:
+            test:
+                run_commands:
+                    implementation: fabric.fabric_plugin.tasks.run_commands
+                    inputs:
+                        commands:        { get_input: commands   }
+                        fabric_env:      { get_input: fabric_env }
+                        use_sudo:        { get_input: use_sudo }
+                        hide_output:     { get_input: hide_output }
+                run_task:
+                    implementation: fabric.fabric_plugin.tasks.run_task
+                    inputs:
+                        tasks_file:      { get_input: tasks_file }
+                        task_name:       { get_input: task_name  }
+                        task_properties: { get_input: task_properties }
+                        fabric_env:      { get_input: fabric_env }
+                        hide_output:     { get_input: hide_output }
+                run_module_task:
+                    implementation: fabric.fabric_plugin.tasks.run_module_task
+                    inputs:
+                        task_mapping:    { get_input: task_mapping }
+                        task_properties: { get_input: task_properties }
+                        fabric_env:      { get_input: fabric_env }
+                        hide_output:     { get_input: hide_output }
+                run_script:
+                    implementation: fabric.fabric_plugin.tasks.run_script
+                    inputs:
+                        script_path:     { get_input: script_path }
+                        process:         { get_input: process }
+                        fabric_env:      { get_input: fabric_env }
+                        custom_env_var:  { get_input: custom_input }
+                        use_sudo:        { get_input: use_sudo }
+                        hide_output:     { get_input: hide_output }
+
+workflows:
+    execute_operation:
+        mapping: fabric.fabric_plugin.tests.tests.execute_operation
+        parameters: { operation: {} }
+
+plugins:
+    fabric:
+        executor: central_deployment_agent
+        install: false
+
+node_types:
+    cloudify.nodes.Compute:
+        properties: { ip: {} }

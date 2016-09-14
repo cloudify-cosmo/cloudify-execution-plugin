@@ -1,0 +1,37 @@
+environment:
+
+  TOX_ENV: pywin
+
+  matrix:
+    - PYTHON: C:\Python27
+      PYTHON_VERSION: 2.7.8
+      PYTHON_ARCH: 32
+
+install:
+
+  #################################
+  # Change Python Registry
+  #################################
+
+  - reg ADD HKCU\Software\Python\PythonCore\2.7\InstallPath /ve /d "C:\Python27" /t REG_SZ /f
+  - reg ADD HKLM\Software\Python\PythonCore\2.7\InstallPath /ve /d "C:\Python27" /t REG_SZ /f
+
+  #################################
+  # Installing Inno Setup
+  #################################
+
+  - choco install -y InnoSetup
+  - set PATH="C:\\Program Files (x86)\\Inno Setup 5";%PATH%
+
+build: false # Not a C# project, build stuff at the test step instead.
+
+before_test:
+  - pip install virtualenv --upgrade
+  - virtualenv --version
+  - virtualenv env
+  - 'env\Scripts\activate.bat'
+  - echo Installing tox
+  - pip install tox
+
+test_script:
+  - tox -e %TOX_ENV%
