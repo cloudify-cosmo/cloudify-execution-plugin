@@ -23,7 +23,7 @@ install:
   - choco install -y InnoSetup
   - set PATH="C:\\Program Files (x86)\\Inno Setup 5";%PATH%
 
-build: false # Not a C# project, build stuff at the test step instead.
+build: true
 
 before_test:
   - pip install virtualenv --upgrade
