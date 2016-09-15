@@ -27,7 +27,7 @@ setup(
     install_requires=[
         # TODO decide on plugins-common dependency (if any)
         'fabric==1.8.3',
-        'six>=1.8.0'
-        'pywinrm',
+        'six>=1.8.0',
+        'pywinrm'
     ]
 )
