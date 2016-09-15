@@ -25,7 +25,8 @@ class TestWinrmPlugin(unittest.TestCase):
     @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
     def test_01_check_remote_path(self):
         path = tempfile.gettempdir()
-        self.assertTrue(tasks.check_remote_path(PyShell(self), path))
+        id = PyShell(self)
+        self.assertTrue(tasks.check_remote_path(id, path))
         path = 'non-exists'
-        self.assertFalse(tasks.check_remote_path(PyShell(self), path))
+        self.assertFalse(tasks.check_remote_path(id, path))
 
