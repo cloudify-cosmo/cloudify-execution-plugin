@@ -3,3 +3,8 @@ https://github.com/cloudify-cosmo/cloudify-rest-client/archive/master.zip
 https://github.com/cloudify-cosmo/cloudify-plugins-common/archive/master.zip
 pyzmq==15.1.0
 mock
+nose
+nose-cov
+testtools
+testfixtures
+coverage==3.7.1
