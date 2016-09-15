@@ -24,11 +24,13 @@ class TestWinrmPlugin(unittest.TestCase):
 
     @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
     def test_01_check_remote_path(self):
-        password = "uDy=rr@Jm%9c~pe"
-        user = "appveyor"
-        s = winrm.Session('localhost', auth=(user, password))
+        s = winrm.Session('windows-host', auth=('john.smith', 'secret'))
+
         r = s.run_cmd('ipconfig', ['/all'])
-        print(r.status_code, r.std_out)
+
+        assert r.status_code == 0
+        assert b'Windows IP Configuration' in r.std_out
+        assert len(r.std_err) == 0
 
         # path = tempfile.gettempdir()
         # id = PyShell(None)
