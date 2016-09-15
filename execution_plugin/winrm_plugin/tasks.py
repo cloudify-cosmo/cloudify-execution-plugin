@@ -4,6 +4,7 @@ import os.path
 # installed libraries imports
 import winrm
 import winrm.exceptions as exceptions
+
 # our library imports
 from cloudify import ctx
 from cloudify.decorators import operation

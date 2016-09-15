@@ -3,10 +3,12 @@
 
 import os
 import shutil
+from idlelib import PyShell
 import unittest
 import tempfile
 
 from mock import patch
+
 
 from cloudify.mocks import MockCloudifyContext
 
@@ -23,7 +25,7 @@ class TestWinrmPlugin(unittest.TestCase):
     @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
     def test_01_check_remote_path(self):
         path = tempfile.gettempdir()
-        self.assertTrue(tasks.check_remote_path(self.pyshell, path))
+        self.assertTrue(tasks.check_remote_path(PyShell(self), path))
         path = 'non-exists'
-        self.assertFalse(tasks.check_remote_path(self.pyshell, path))
+        self.assertFalse(tasks.check_remote_path(PyShell(self), path))
 
