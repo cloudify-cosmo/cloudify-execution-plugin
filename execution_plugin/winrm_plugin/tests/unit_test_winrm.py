@@ -6,7 +6,6 @@ import shutil
 import unittest
 import tempfile
 
-import distro
 from mock import patch
 
 from cloudify.mocks import MockCloudifyContext
