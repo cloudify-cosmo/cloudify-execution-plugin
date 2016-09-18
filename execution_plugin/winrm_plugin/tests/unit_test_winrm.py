@@ -14,7 +14,7 @@ from cloudify.mocks import MockCloudifyContext
 
 from .. import tasks
 
-@pytest.mark.usefixtures("protocol_fake")
+# @pytest.mark.usefixtures("protocol_fake")
 class TestWinrmPlugin(unittest.TestCase):
 
     def setUp(self):
