@@ -26,7 +26,7 @@ class TestWinrmPlugin(unittest.TestCase):
     def test_01_check_remote_path(self):
         path = tempfile.gettempdir()
         x = conftest.protocol_fake
-        id = x.open_shell()
+        id = x.open_shell
         self.assertTrue(tasks.check_remote_path(id, path))
         path = 'non-exists'
         self.assertFalse(tasks.check_remote_path(id, path))
