@@ -14,10 +14,11 @@ from cloudify.mocks import MockCloudifyContext
 
 from .. import tasks
 
+@pytest.mark.usefixtures("conftest.protocol_fake")
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
-def test_01_check_remote_path(protocol_fake):
+def test_01_check_remote_path():
     path = tempfile.gettempdir()
-    id = protocol_fake.open_shell()
+    id = conftest.protocol_fake.open_shell()
     assert tasks.check_remote_path(id, path) == True
     path = 'non-exists'
     assert tasks.check_remote_path(id, path) == False
