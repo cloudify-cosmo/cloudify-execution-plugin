@@ -8,6 +8,7 @@ import unittest
 import tempfile
 import winrm
 from mock import patch
+import pytest
 from winrm.tests import conftest
 
 from cloudify.mocks import MockCloudifyContext
@@ -22,7 +23,7 @@ class TestWinrmPlugin(unittest.TestCase):
     def tearDown(self):
         pass
 
-    @fixture(scope='module')
+    @pytest.fixture(scope='module')
     @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
     def test_01_check_remote_path(self):
         path = tempfile.gettempdir()
