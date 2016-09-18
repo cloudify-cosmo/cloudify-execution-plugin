@@ -8,7 +8,7 @@ import unittest
 import tempfile
 import winrm
 from mock import patch
-import pytest
+# import pytest
 from winrm.tests import conftest
 from cloudify.mocks import MockCloudifyContext
 
