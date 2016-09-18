@@ -22,10 +22,11 @@ class TestWinrmPlugin(unittest.TestCase):
     def tearDown(self):
         pass
 
+    @pytest.mark.usefixtures("conftest.protocol_fake")
     @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
-    def test_01_check_remote_path(self, None, protocol_fake):
+    def test_01_check_remote_path(self):
         path = tempfile.gettempdir()
-        id = protocol_fake.open_shell()
+        id = conftest.protocol_fake.open_shell()
         self.assertTrue(tasks.check_remote_path(id, path))
         path = 'non-exists'
         self.assertFalse(tasks.check_remote_path(id, path))
