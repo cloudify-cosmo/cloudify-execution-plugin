@@ -8,3 +8,6 @@ nose-cov
 testtools
 testfixtures
 coverage==3.7.1
+pytest
+pytest-cov
+pytest-pep8
