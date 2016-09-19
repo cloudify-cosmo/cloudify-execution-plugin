@@ -18,7 +18,7 @@ from .. import tasks
 def test_01_check_remote_path(protocol_fake):
     path = tempfile.gettempdir()
     id = protocol_fake.open_shell()
-    assert tasks.check_remote_path(id, path) == True
+    assert tasks.check_remote_path(id, path, protocol_fake) == True
     path = 'non-exists'
-    assert tasks.check_remote_path(id, path) == False
+    assert tasks.check_remote_path(id, path, protocol_fake) == False
 
