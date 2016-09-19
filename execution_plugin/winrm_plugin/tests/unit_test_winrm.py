@@ -6,7 +6,7 @@ import shutil
 from idlelib import PyShell
 import unittest
 import tempfile
-from winrm.tests import conftest
+from winrm.tests.conftest import protocol_fake
 from mock import patch
 import pytest
 from cloudify.mocks import MockCloudifyContext
@@ -59,7 +59,7 @@ class TestWinrmPlugin(unittest.TestCase):
     @pytest.mark.usefixtures('protocol_fake')
     @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
     def test_01_check_remote_path(self):
-        x = conftest.protocol_fake
+        x = protocol_fake
         path = tempfile.gettempdir()
         id = x.open_shell()
         self.assertTrue(tasks.check_remote_path(id, path))
