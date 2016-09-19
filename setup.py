@@ -30,5 +30,7 @@ setup(
         'six>=1.8.0',
         'pywinrm',
         'pytest',
+        'pep8',
+        'cov'
     ]
 )
