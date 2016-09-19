@@ -56,7 +56,7 @@ class TestWinrmPlugin(unittest.TestCase):
     def tearDown(self):
         pass
 
-    x = conftest.protocol_fake()
+    x = conftest.protocol_fake(None)
 
     @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
     def test_01_check_remote_path(self, x):
