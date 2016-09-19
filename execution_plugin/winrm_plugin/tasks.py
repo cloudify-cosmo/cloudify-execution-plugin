@@ -208,11 +208,11 @@ def check_remote_path(remote_shell_id, cmd_path, conn):
     verifying user path exists.
     '''
     try:
-        command_id = conn.run_command(remote_shell_id, "IF EXIST {0} (ECHO 1) ELSE (ECHO 0)".format(cmd_path))
+        command_id = conn.run_command(remote_shell_id, "TEST-PATH {0}".format(cmd_path))
         stdout, stderr, return_code = conn.get_command_output(remote_shell_id,
                                                               command_id)
         conn.cleanup_command(remote_shell_id, command_id)
-        return True if int(stdout) == 1 else False
+        return True if stdout == 'True' else False
     except exceptions.WinRMTransportError as remote_run_error:
         raise RecoverableError('Can\'t run remote command. Error: ({0})'.format(str(remote_run_error)))
 
