@@ -57,10 +57,11 @@ before_test:
 
 test_script:
   - ps: |
-     $ErrorActionPreference = "Stop"
-     $env:WINRM_USERNAME=$($env:USERNAME)
-     $env:WINRM_PASSWORD=[Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
-     $env:WINRM_TRANSPORT="basic"
-     $env:WINRM_ENDPOINT="http://localhost:5985/wsman"
+      $ErrorActionPreference = "Stop"
+      SetX WINRM_ENDPOINT "http://localhost:5985/wsman"
+      SetX WINRM_USERNAME $($env:USERNAME)
+      $x = [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
+      SetX WINRM_PASSWORD x
+      SetX WINRM_TRANSPORT "basic"
 
-     py.test -v -rxs execution_plugin/winrm_plugin/tests --cov-report=term-missing --cov=execution_plugin/winrm_plugin/tests
+  - tox -e %TOX_ENV%
