@@ -14,7 +14,7 @@ from cloudify.mocks import MockCloudifyContext
 
 from .. import tasks
 
-pytestmark = pytest.mark.usefixtures("protocol_fake")
+pytestmark = pytest.mark.usefixtures("protocol_real")
 
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
