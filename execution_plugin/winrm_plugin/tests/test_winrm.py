@@ -27,7 +27,7 @@ def test_01_check_remote_path(protocol_fake):
 
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
-def test_02_run_remote_command(pytestmark):
+def test_02_run_remote_command(protocol_real):
     path = tempfile.gettempdir()
-    shell_id = pytestmark.open_shell()
-    tasks.run_remote_command(shell_id, 'powershell', path, 'echo 1', pytestmark)
+    shell_id = protocol_real.open_shell()
+    tasks.run_remote_command(shell_id, 'powershell', path, 'echo 1', protocol_real)
