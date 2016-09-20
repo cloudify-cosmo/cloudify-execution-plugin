@@ -58,10 +58,10 @@ before_test:
 test_script:
   - ps: |
       $ErrorActionPreference = "Stop"
-      SetX WINRM_ENDPOINT "http://localhost:5985/wsman"
+      SetX WINRM_ENDPOINT http://localhost:5985/wsman
       SetX WINRM_USERNAME $($env:USERNAME)
       $x = [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
-      SetX WINRM_PASSWORD x
-      SetX WINRM_TRANSPORT "basic"
+      SetX WINRM_PASSWORD $x
+      SetX WINRM_TRANSPORT basic
 
   - tox -e %TOX_ENV%
