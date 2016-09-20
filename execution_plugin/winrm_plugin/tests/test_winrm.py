@@ -28,4 +28,3 @@ def test_02_run_remote_command(protocol_real):
     path = tempfile.gettempdir()
     shell_id = protocol_real.open_shell()
     tasks.run_remote_command(shell_id, 'powershell', path, 'echo 1', protocol_real)
-    
