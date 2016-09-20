@@ -8,9 +8,9 @@ environment:
       PYTHON_ARCH: 32
 
 
-#init:
-# - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-#
+init:
+ - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 
 install:
 
@@ -39,6 +39,10 @@ install:
       Set-Item WSMan:\localhost\Service\AllowUnencrypted $true
       Invoke-Expression $($env:WITH_COMPILER + " pip install cffi coveralls")
       pip install .
+      $env:WINRM_ENDPOINT="http://localhost:5985/wsman"
+      $env:WINRM_USERNAME=$($env:USERNAME)
+      $env:WINRM_PASSWORD=[Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
+      $env:WINRM_TRANSPORT="basic"
 
   - pip install -r test-requirements.txt
 
@@ -47,9 +51,9 @@ build: false # Not a C# project, build stuff at the test step instead.
 before_test:
   - echo Installing tox (2.0.0)
   - pip install tox==2.0.0
-#
-#on_finish:
-# - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+on_finish:
+ - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 test_script:
   - ps: |
@@ -58,5 +62,5 @@ test_script:
       $env:WINRM_USERNAME=$($env:USERNAME)
       $env:WINRM_PASSWORD=[Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
       $env:WINRM_TRANSPORT="basic"
-      
+
   - tox -e %TOX_ENV%
