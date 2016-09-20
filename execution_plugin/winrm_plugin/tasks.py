@@ -209,7 +209,7 @@ def check_remote_path(remote_shell_id, cmd_path, conn):
     '''
     cmd = create_encoded_command(cmd_path)
     try:
-        command_id = conn.run_command(remote_shell_id, 'TEST-PATH', cmd)
+        command_id = conn.run_command(remote_shell_id, 'TEST-PATH', cmd_path)
         stdout, stderr, return_code = conn.get_command_output(remote_shell_id,
                                                               command_id)
         conn.cleanup_command(remote_shell_id, command_id)
