@@ -39,8 +39,7 @@ install:
       Set-Item WSMan:\localhost\Service\AllowUnencrypted $true
       Invoke-Expression $($env:WITH_COMPILER + " pip install cffi coveralls")
       pip install .
-
-      [Environment]::SetEnvironmentVariable("WINRM_ENDPOINT", "http://localhost:5985/wsman", "Machine")
+      [Environment]::SetEnvironmentVariable("WINRM_ENDPOINT", "http://localhost:5985/wsman", "User")
       [Environment]::SetEnvironmentVariable("WINRM_USERNAME", $($env:USERNAME), "Machine")
       [Environment]::SetEnvironmentVariable("WINRM_PASSWORD", [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", ''), "Machine")
       [Environment]::SetEnvironmentVariable("WINRM_TRANSPORT", "basic", "Machine")
