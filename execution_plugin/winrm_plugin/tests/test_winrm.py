@@ -15,10 +15,10 @@ from cloudify.mocks import MockCloudifyContext
 
 from .. import tasks
 
-@patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
+# @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
 def test_01_check_remote_path(protocol_real):
     path = tempfile.gettempdir()
     shell_id = protocol_real.open_shell()
-    assert tasks.check_remote_path(shell_id, path, protocol_real) == True
-    # path = 'non-exists'
-    # assert not tasks.check_remote_path(shell_id, path, protocol_real)
+    assert tasks.check_remote_path(shell_id, path, protocol_real)
+    path = 'non-exists'
+    assert not tasks.check_remote_path(shell_id, path, protocol_real)
