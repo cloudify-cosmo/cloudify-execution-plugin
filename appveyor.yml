@@ -45,7 +45,7 @@ install:
       [Environment]::SetEnvironmentVariable("WINRM_PASSWORD", [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", ''), "Machine")
       [Environment]::SetEnvironmentVariable("WINRM_TRANSPORT", "basic", "Machine")
 
-   - pip install -r test-requirements.txt
+  - pip install -r test-requirements.txt
 
 build: false # Not a C# project, build stuff at the test step instead.
 
