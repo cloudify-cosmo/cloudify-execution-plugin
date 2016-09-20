@@ -18,12 +18,12 @@ pytestmark = pytest.mark.usefixtures("protocol_fake", "protocol_real")
 
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
-def test_01_check_remote_path(pytestmark):
+def test_01_check_remote_path(protocol_fake):
     path = tempfile.gettempdir()
-    shell_id = pytestmark.open_shell()
-    assert tasks.check_remote_path(shell_id, path, pytestmark)
+    shell_id = protocol_fake.open_shell()
+    assert tasks.check_remote_path(shell_id, path, protocol_fake)
     path = 'non-exists'
-    assert not tasks.check_remote_path(shell_id, path, pytestmark)
+    assert not tasks.check_remote_path(shell_id, path, protocol_fake)
 
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
