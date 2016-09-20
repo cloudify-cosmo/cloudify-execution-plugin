@@ -58,9 +58,9 @@ before_test:
 test_script:
   - ps: |
       $ErrorActionPreference = "Stop"
-      [Environment]::SetEnvironmentVariable("WINRM_ENDPOINT", "http://localhost:5985/wsman", "User")
-      [Environment]::SetEnvironmentVariable("WINRM_USERNAME", $($env:USERNAME), "Machine")
-      [Environment]::SetEnvironmentVariable("WINRM_PASSWORD", [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", ''), "Machine")
-      [Environment]::SetEnvironmentVariable("WINRM_TRANSPORT", "basic", "Machine")
+      SetX WINRM_ENDPOINT "http://localhost:5985/wsman"
+      SetX WINRM_USERNAME $($env:USERNAME)
+      SetX WINRM_PASSWORD [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
+      SetX WINRM_TRANSPORT "basic"
 
   - tox -e %TOX_ENV%
