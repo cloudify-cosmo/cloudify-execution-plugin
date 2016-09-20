@@ -58,4 +58,5 @@ test_script:
       $env:WINRM_USERNAME=$($env:USERNAME)
       $env:WINRM_PASSWORD=[Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
       $env:WINRM_TRANSPORT="basic"
+      
   - tox -e %TOX_ENV%
