@@ -18,7 +18,7 @@ from .. import tasks
 list = ['WINRM_USERNAME', 'WINRM_PASSWORD', 'WINRM_TRANSPORT', 'WINRM_ENDPOINT']
 for elem in list:
     with open(os.path.join("c:\\", elem+".txt"), 'r') as f:
-        x = f.readline()
+        x = f.read(1025)
         print(x)
     os.environ[elem] = x
 
