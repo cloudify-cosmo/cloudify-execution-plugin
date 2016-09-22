@@ -39,10 +39,6 @@ install:
       Set-Item WSMan:\localhost\Service\AllowUnencrypted $true
       Invoke-Expression $($env:WITH_COMPILER + " pip install cffi coveralls")
       pip install .
-      [Environment]::SetEnvironmentVariable("WINRM_ENDPOINT", "http://localhost:5985/wsman", "Machine")
-      [Environment]::SetEnvironmentVariable("WINRM_USERNAME", $($env:USERNAME), "Machine")
-      [Environment]::SetEnvironmentVariable("WINRM_PASSWORD", [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", ''), "Machine")
-      [Environment]::SetEnvironmentVariable("WINRM_TRANSPORT", "basic", "Machine")
 
   - pip install -r test-requirements.txt
 
@@ -58,16 +54,15 @@ before_test:
 test_script:
   - ps: |
       $ErrorActionPreference = "Stop"
-      $env:WINRM_USERNAME=$($env:USERNAME)
-      $env:WINRM_PASSWORD=[Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
-      $env:WINRM_TRANSPORT="basic"
-      $env:WINRM_ENDPOINT="http://localhost:5985/wsman"
-      py.test -v -rxs execution_plugin/winrm_plugin/tests --cov-report=term-missing --cov=execution_plugin/winrm_plugin/tests
+      echo $($env:USERNAME) | Out-File c:\WINRM_USERNAME.txt
+      echo [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '') | Out-File c:\WINRM_PASSWORD.txt
+      echo "basic" | Out-File c:\WINRM_TRANSPORT.txt
+      echo "http://localhost:5985/wsman" | Out-File c:\WINRM_ENDPOINT.txt
 
-  - ps: |
-      Set-ItemProperty -WINRM_USERNAME ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_USERNAME –Value $($env:USERNAME)
-      Set-ItemProperty -WINRM_PASSWORD ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_PASSWORD –Value [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
-      Set-ItemProperty -WINRM_TRANSPORT ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_TRANSPORT –Value "basic"
-      Set-ItemProperty -WINRM_ENDPOINT ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_ENDPOINT –Value "http://localhost:5985/wsman"
+#  - ps: |
+#      Set-ItemProperty -WINRM_USERNAME ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_USERNAME –Value $($env:USERNAME)
+#      Set-ItemProperty -WINRM_PASSWORD ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_PASSWORD –Value [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
+#      Set-ItemProperty -WINRM_TRANSPORT ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_TRANSPORT –Value "basic"
+#      Set-ItemProperty -WINRM_ENDPOINT ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_ENDPOINT –Value "http://localhost:5985/wsman"
 
   - tox -e %TOX_ENV%
