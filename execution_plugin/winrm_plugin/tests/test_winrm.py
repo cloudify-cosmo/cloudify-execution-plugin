@@ -15,7 +15,16 @@ from cloudify.mocks import MockCloudifyContext
 from .. import tasks
 
 # pytestmark = pytest.mark.usefixtures("protocol_fake", "protocol_real")
+list = ['WINRM_USERNAME', 'WINRM_PASSWORD', 'WINRM_TRANSPORT', 'WINRM_ENDPOINT']
+for elem in list:
+    with open(os.path.join('c:', elem)) as f:
+        x = f.readline()
+    os.environ[elem] = x
 
+print(os.environ['WINRM_USERNAME'])
+print(os.environ['WINRM_PASSWORD'])
+print(os.environ['WINRM_TRANSPORT'])
+print(os.environ['WINRM_ENDPOINT'])
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
 def test_01_check_remote_path(protocol_fake):
