@@ -17,7 +17,7 @@ from .. import tasks
 # pytestmark = pytest.mark.usefixtures("protocol_fake", "protocol_real")
 list = ['WINRM_USERNAME', 'WINRM_PASSWORD', 'WINRM_TRANSPORT', 'WINRM_ENDPOINT']
 for elem in list:
-    with open(os.path.join('c:', "\'+elem+'.txt')) as f:
+    with open(os.path.join('c:', '\''+elem+'.txt')) as f:
         x = f.readline()
     os.environ[elem] = x
 
