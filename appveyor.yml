@@ -66,7 +66,7 @@ test_script:
 
   - ps: |
   Set-ItemProperty -WINRM_USERNAME ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_USERNAME –Value $($env:USERNAME)
-  Set-ItemProperty -WINRM_PASSWORD ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_PASSWORD –Value [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
+#  Set-ItemProperty -WINRM_PASSWORD ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_PASSWORD –Value [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
   Set-ItemProperty -WINRM_TRANSPORT ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_TRANSPORT –Value "basic"
   Set-ItemProperty -WINRM_ENDPOINT ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name WINRM_ENDPOINT –Value "http://localhost:5985/wsman"
 
