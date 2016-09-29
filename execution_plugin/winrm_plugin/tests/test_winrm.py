@@ -21,8 +21,8 @@ for elem in list:
         x = f.read()
         b = x.decode('utf-16')
     os.environ[elem] = b
-os.environ['WINRM_TRANSPORT'] = "basic"
-os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
+os.environ['WINRM_TRANSPORT'] = 'basic'
+os.environ['WINRM_ENDPOINT'] = 'http://localhost:5985/wsman'
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
 def test_01_check_remote_path(protocol_fake):

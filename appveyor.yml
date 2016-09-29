@@ -38,6 +38,8 @@ install:
       Set-Item WSMan:\localhost\Service\Auth\Basic $true
       Set-Item WSMan:\localhost\Service\AllowUnencrypted $true
       Invoke-Expression $($env:WITH_COMPILER + " pip install cffi coveralls")
+      &netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow
+      &netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
       pip install .
 
   - pip install -r test-requirements.txt
