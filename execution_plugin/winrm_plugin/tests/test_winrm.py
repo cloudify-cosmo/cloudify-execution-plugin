@@ -19,7 +19,7 @@ list = ['WINRM_USERNAME', 'WINRM_PASSWORD', 'WINRM_TRANSPORT', 'WINRM_ENDPOINT']
 for elem in list:
     with open(os.path.join("c:\\", elem+".txt"), 'r') as f:
         x = f.read()
-        b = x.decode('utf-8')
+        b = x.decode('utf-16')
         print()
     os.environ[elem] = b
 
