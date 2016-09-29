@@ -20,7 +20,7 @@ for elem in list:
     with open(os.path.join("c:\\", elem+".txt"), 'r') as f:
         x = f.read()
 
-        print(x.decode('utf-8'))
+        print(unicode(x))
     os.environ[elem] = x
 
 print(os.environ['WINRM_USERNAME'])
