@@ -30,7 +30,7 @@ def test_01_check_remote_path(protocol_fake):
     path = '%TEMP%'
     shell_id = protocol_fake.open_shell()
     assert tasks.check_remote_path(shell_id, path, protocol_fake)
-    path = 'non-exists'
+    path = 'not-exists'
     assert not tasks.check_remote_path(shell_id, path, protocol_fake)
 
 
