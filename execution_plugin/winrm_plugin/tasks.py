@@ -216,6 +216,7 @@ def check_remote_path(remote_shell_id, cmd_path, conn):
         stdout, stderr, return_code = conn.get_command_output(remote_shell_id,
                                                               command_id)
         conn.cleanup_command(remote_shell_id, command_id)
+        print (stdout, stderr, return_code)
         return True if int(stdout) == 1 else False
     except exceptions.WinRMTransportError as remote_run_error:
         raise RecoverableError('Can\'t run remote command. Error: '
