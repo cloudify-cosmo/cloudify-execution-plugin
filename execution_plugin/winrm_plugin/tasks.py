@@ -187,7 +187,7 @@ def create_encoded_command(command):
     generating encoded command for winrm format.
     '''
     try:
-        return base64.b64encode(command.encode("utf_16_le"))
+        return base64.b64encode(command.encode("utf_8"))
     except AttributeError as encoded_command_error:
         raise NonRecoverableError('command var is None. Error: '
                                   '{0}'.format(str(encoded_command_error)))

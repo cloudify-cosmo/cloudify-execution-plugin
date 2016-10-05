@@ -3,6 +3,7 @@
 
 import os
 import shutil
+import base64
 from idlelib import PyShell
 import unittest
 import tempfile
@@ -19,10 +20,10 @@ list = ['WINRM_USERNAME', 'WINRM_PASSWORD']
 for elem in list:
     with open(os.path.join("c:\\", elem+".txt"), 'r') as f:
         x = f.read()
-        b = x.decode('utf_16_le')
+        b = base64.b64encode(x)
     os.environ[elem] = b
-os.environ['WINRM_TRANSPORT'] = 'basic'.decode('utf_16_le')
-os.environ['WINRM_ENDPOINT'] = 'http://localhost:5985/wsman'.decode('utf_16_le')
+os.environ['WINRM_TRANSPORT'] = base64.b64encode('basic')
+os.environ['WINRM_ENDPOINT'] = base64.b64encode('http://localhost:5985/wsman')
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
 def test_01_check_remote_path(protocol_fake):
