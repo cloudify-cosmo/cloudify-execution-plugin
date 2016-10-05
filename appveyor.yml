@@ -1,8 +1,5 @@
 environment:
 
-  global:
-    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\scripts\\run_with_compiler.cmd"
-
   TOX_ENV: pywin
 
   matrix:
