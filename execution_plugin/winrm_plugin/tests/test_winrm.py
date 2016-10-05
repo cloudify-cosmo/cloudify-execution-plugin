@@ -28,6 +28,7 @@ os.environ['WINRM_ENDPOINT'] = 'http://localhost:5985/wsman'.decode('utf-8')
 def test_01_check_remote_path(protocol_fake):
     path = tempfile.gettempdir()
     shell_id = protocol_fake.open_shell()
+    print (shell_id)
     assert tasks.check_remote_path(shell_id, path, protocol_fake)
     path = 'non-exists'
     assert not tasks.check_remote_path(shell_id, path, protocol_fake)
