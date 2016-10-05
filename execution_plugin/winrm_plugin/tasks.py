@@ -210,7 +210,7 @@ def check_remote_path(remote_shell_id, cmd_path, conn):
     print cmd_path
     try:
         # command = base64.b64encode(('IF EXIST {0} (ECHO 1) ELSE (ECHO 0)'.format(cmd_path)).encode("utf_8_le"))
-        command_id = conn.run_command(remote_shell_id, 'echo', ['1'])
+        command_id = conn.run_command(remote_shell_id, 'echo', ['/1'])
         stdout, stderr, return_code = conn.get_command_output(remote_shell_id,
                                                               command_id)
         conn.cleanup_command(remote_shell_id, command_id)
