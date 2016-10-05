@@ -29,7 +29,7 @@ os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
 def test_01_check_remote_path(protocol_fake):
     path = '%TEMP%'
     shell_id = protocol_fake.open_shell()
-    assert tasks.run_remote_command(shell_id, 'powershll', path, protocol_fake)
+    assert tasks.check_remote_path(shell_id, path, protocol_fake)
     path = 'non-exists'
     assert not tasks.check_remote_path(shell_id, path, protocol_fake)
 
