@@ -19,16 +19,15 @@ list = ['WINRM_USERNAME', 'WINRM_PASSWORD']
 for elem in list:
     with open(os.path.join("c:\\", elem+".txt"), 'r') as f:
         x = f.read()
-        b = x.decode('utf-8')
+        b = x.decode('utf_16_le')
     os.environ[elem] = b
-os.environ['WINRM_TRANSPORT'] = 'basic'.decode('utf-8')
-os.environ['WINRM_ENDPOINT'] = 'http://localhost:5985/wsman'.decode('utf-8')
+os.environ['WINRM_TRANSPORT'] = 'basic'.decode('utf_16_le')
+os.environ['WINRM_ENDPOINT'] = 'http://localhost:5985/wsman'.decode('utf_16_le')
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
 def test_01_check_remote_path(protocol_fake):
     path = tempfile.gettempdir()
     shell_id = protocol_fake.open_shell()
-    print (shell_id)
     assert tasks.check_remote_path(shell_id, path, protocol_fake)
     path = 'non-exists'
     assert not tasks.check_remote_path(shell_id, path, protocol_fake)
@@ -38,4 +37,4 @@ def test_01_check_remote_path(protocol_fake):
 def test_02_run_remote_command(protocol_real):
     path = tempfile.gettempdir()
     shell_id = protocol_real.open_shell()
-    tasks.run_remote_command(shell_id, 'powershell', path, 'echo 1'.decode('utf-8'), protocol_real)
+    tasks.run_remote_command(shell_id, 'powershell', path, 'echo 1', protocol_real)

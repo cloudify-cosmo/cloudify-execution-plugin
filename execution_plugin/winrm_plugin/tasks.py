@@ -207,7 +207,7 @@ def check_remote_path(remote_shell_id, cmd_path, conn):
     '''
     verifying user path exists.
     '''
-    cmd = ('TEST-PATH {0}'.format(cmd_path)).decode('utf-8')
+    cmd = base64.b64encode(('TEST-PATH {0}'.format(cmd_path)).decode('utf_16_le'))
     try:
         command_id = conn.run_command(remote_shell_id, cmd)
         stdout, stderr, return_code = conn.get_command_output(remote_shell_id,
