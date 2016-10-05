@@ -19,7 +19,7 @@ list = ['WINRM_USERNAME', 'WINRM_PASSWORD']
 for elem in list:
     with open(os.path.join("c:\\", elem+".txt"), 'r') as f:
         x = f.read()
-        b = x.decode('utf-16')
+        b = x.decode('utf-8')
     os.environ[elem] = b
 os.environ['WINRM_TRANSPORT'] = 'basic'.decode('utf-8')
 os.environ['WINRM_ENDPOINT'] = 'http://localhost:5985/wsman'.decode('utf-8')
