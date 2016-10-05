@@ -207,9 +207,10 @@ def check_remote_path(remote_shell_id, cmd_path, conn):
     '''
     Veryfing shell exists
     '''
+    print cmd_path
     try:
-        command_id = conn.run_command(remote_shell_id,
-                                      'IF EXIST %TEMP% (ECHO 1) ELSE (ECHO 0)')
+        command = base64.b64encode('IF EXIST {0} (ECHO 1) ELSE (ECHO 0)'.format(cmd_path))
+        command_id = conn.run_command(remote_shell_id, command)
         stdout, stderr, return_code = conn.get_command_output(remote_shell_id,
                                                               command_id)
         conn.cleanup_command(remote_shell_id, command_id)
