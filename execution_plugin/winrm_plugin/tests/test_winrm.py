@@ -27,7 +27,7 @@ os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
 def test_01_check_remote_path(protocol_fake):
-    path = '%TEMP%'
+    path = tempfile.gettempdir()
     shell_id = protocol_fake.open_shell()
     assert tasks.check_remote_path(shell_id, path, protocol_fake)
     path = 'not-exists'
