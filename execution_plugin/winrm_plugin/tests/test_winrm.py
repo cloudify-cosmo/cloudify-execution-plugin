@@ -24,18 +24,22 @@ for elem in list:
     os.environ[elem] = b
 os.environ['WINRM_TRANSPORT'] = "basic"
 os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
-
-@patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
-def test_01_check_remote_path(protocol_fake):
-    path = tempfile.gettempdir()
-    shell_id = protocol_fake.open_shell()
-    assert tasks.check_remote_path(shell_id, path, protocol_fake)
-    path = 'not-exists'
-    assert not tasks.check_remote_path(shell_id, path, protocol_fake)
+#
+# @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
+# def test_01_check_remote_path(protocol_fake):
+#     path = tempfile.gettempdir()
+#     shell_id = protocol_fake.open_shell()
+#     assert tasks.check_remote_path(shell_id, path, protocol_fake)
+#     path = 'not-exists'
+#     assert not tasks.check_remote_path(shell_id, path, protocol_fake)
 
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
 def test_02_run_remote_command(protocol_real):
     path = tempfile.gettempdir()
     shell_id = protocol_real.open_shell()
-    tasks.run_remote_command(shell_id, 'powershell', path, 'echo 1', protocol_real)
+    print(shell_id)
+    assert tasks.check_remote_path(shell_id, path, protocol_real)
+    path = 'not-exists'
+    assert not tasks.check_remote_path(shell_id, path, protocol_real)
+
