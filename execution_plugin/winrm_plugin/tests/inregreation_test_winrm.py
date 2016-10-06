@@ -4,11 +4,13 @@
 import os
 import shutil
 import base64
+from idlelib import PyShell
 import unittest
 import tempfile
 from winrm.tests.conftest import protocol_fake, protocol_real
 
 from mock import patch
+import pytest
 from cloudify.mocks import MockCloudifyContext
 
 from .. import tasks
