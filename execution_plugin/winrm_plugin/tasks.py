@@ -204,21 +204,17 @@ def define_script_path(remote_script_path, is_cmd=True):
 
 
 def check_remote_path(remote_shell_id, cmd_path, conn):
-    '''
-    Veryfing shell exists
-    '''
-    print cmd_path
+
     try:
-        # command = base64.b64encode(('IF EXIST {0} (ECHO 1) ELSE (ECHO 0)'.format(cmd_path)).encode("utf_8_le"))
-        command_id = conn.run_command(remote_shell_id, 'hostname')
+        command_id = conn.run_command(remote_shell_id,
+                                      'IF EXIST {0} (ECHO 1) '
+                                      'ELSE (ECHO 0)'.format(cmd_path))
         stdout, stderr, return_code = conn.get_command_output(remote_shell_id,
                                                               command_id)
         conn.cleanup_command(remote_shell_id, command_id)
-        print (stdout, stderr, return_code)
         return True if int(stdout) == 1 else False
     except exceptions.WinRMTransportError as remote_run_error:
         raise RecoverableError('Can\'t run remote command. Error: '
                                '({0})'.format(str(remote_run_error)))
-
 
 
