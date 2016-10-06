@@ -134,7 +134,8 @@ def create_script_creation_command(local_file_path, powershell_path,
 # call it from configure
 def define_process_var(process):
     '''
-    if process is cmd return empty string, else returns process for the commands prefix.
+    if process is cmd return empty string,
+    else returns process for the commands prefix.
     '''
     process = process.lower()
     return process if process != 'cmd' else ' '

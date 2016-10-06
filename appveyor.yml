@@ -57,9 +57,4 @@ before_test:
 
 
 test_script:
-  - ps: |
-      $ErrorActionPreference = "Stop"
-      echo $($env:USERNAME) | Out-File c:\WINRM_USERNAME.txt
-      [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '') | Out-File c:\WINRM_PASSWORD.txt
-
   - tox -e %TOX_ENV%
