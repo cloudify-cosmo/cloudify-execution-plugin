@@ -12,15 +12,20 @@ from cloudify.mocks import MockCloudifyContext
 
 from .. import tasks
 
-os.environ['WINRM_USERNAME'] = "Administrator"
-os.environ['WINRM_PASSWORD'] = "Aa123456!"
-os.environ['WINRM_TRANSPORT'] = "basic"
-os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
+USER = os.environ['WINRM_USERNAME'] = "Administrator"
+PASSWORD = os.environ['WINRM_PASSWORD'] = "Aa123456!"
+TRANSPORT = os.environ['WINRM_TRANSPORT'] = "basic"
+ENDPOINT = os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
+
 
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
 def test_01_get_conn():
-    pass
+    '''
+    creating right and wrong protocol and verifying results
+    '''
+    tasks.get_conn('http', 'localhost', PASSWORD, USER, '5985')
+    tasks.get_conn('http', None, PASSWORD, USER, '5985')
 
 def test_02_get_remote_shell_id():
     pass
