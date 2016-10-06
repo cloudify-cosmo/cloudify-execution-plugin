@@ -35,6 +35,7 @@ install:
   - ps: Start-Process -FilePath "C:\Python27\python.exe" -ArgumentList "C:\Users\appveyor\get-pip.py" -Wait -Passthru
   - pip --version
   - ps: |
+      $name = hostname
       ([adsi]"WinNT://$name/Administrator").SetPassword("Aa123456!")
       Set-Item WSMan:\localhost\Service\Auth\Basic $true
       Set-Item WSMan:\localhost\Service\AllowUnencrypted $true
