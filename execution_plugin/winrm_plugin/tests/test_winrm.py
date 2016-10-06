@@ -16,12 +16,14 @@ from cloudify.mocks import MockCloudifyContext
 from .. import tasks
 
 # pytestmark = pytest.mark.usefixtures("protocol_fake", "protocol_real")
-list = ['WINRM_USERNAME', 'WINRM_PASSWORD']
-for elem in list:
-    with open(os.path.join("c:\\", elem+".txt"), 'r') as f:
-        x = f.read()
-        b = base64.b64encode(x)
-    os.environ[elem] = b
+# list = ['WINRM_USERNAME', 'WINRM_PASSWORD']
+# for elem in list:
+#     with open(os.path.join("c:\\", elem+".txt"), 'r') as f:
+#         x = f.read()
+#         b = x.encode('utf-16')
+#     os.environ[elem] = b
+os.environ['WINRM_USERNAME'] = "Administrator"
+os.environ['WINRM_PASSWORD'] = "Aa123456!"
 os.environ['WINRM_TRANSPORT'] = "basic"
 os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
 #
@@ -38,7 +40,6 @@ os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
 def test_02_run_remote_command(protocol_real):
     path = tempfile.gettempdir()
     shell_id = protocol_real.open_shell()
-    print(shell_id)
     assert tasks.check_remote_path(shell_id, path, protocol_real)
     path = 'not-exists'
     assert not tasks.check_remote_path(shell_id, path, protocol_real)
