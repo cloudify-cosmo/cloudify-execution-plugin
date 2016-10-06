@@ -30,19 +30,19 @@ def test_01_run_remote_command(protocol_real):
     assert not tasks.check_remote_path(shell_id, path, protocol_real)
 
 
-
-def test_02_run_script():
-    pass
-
-def test_03_run_commands():
-    pass
-
-def test_04_get_remote_shell_id():
-    pass
-
-
-def test_05_create_script_creation_command():
-    pass
-
-def test_06_run_remote_command():
-    pass
+#
+# def test_02_run_script():
+#     pass
+#
+# def test_03_run_commands():
+#     pass
+#
+# def test_04_get_remote_shell_id():
+#     pass
+#
+#
+# def test_05_create_script_creation_command():
+#     pass
+#
+# def test_06_run_remote_command():
+#     pass
