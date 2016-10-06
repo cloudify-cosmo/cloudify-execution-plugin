@@ -57,4 +57,7 @@ before_test:
 
 
 test_script:
+  - ps: |
+       $ErrorActionPreference = "Stop"
+  
   - tox -e %TOX_ENV%
