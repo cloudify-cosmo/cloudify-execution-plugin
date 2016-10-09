@@ -58,8 +58,8 @@ def test_04_check_process_and_ext():
         tasks.check_process_and_ext('test.txt', 'powershell')
     assert "Can\'t run" in str(excinfo.value)
 
-def test_05_create_encoded_command():
-    pass
+# def test_05_create_encoded_command():
+#     pass
 
 def test_06_define_script_path():
     assert tasks.define_script_path(None) == '%TEMP%'
