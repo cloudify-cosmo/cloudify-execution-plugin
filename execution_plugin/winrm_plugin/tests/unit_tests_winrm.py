@@ -45,18 +45,18 @@ def test_03_define_process_var():
     assert tasks.define_process_var(None) is None
 
 def test_04_check_process_and_ext():
-    assert tasks.check_process_and_ext('test.bat', 'cmd')
-    assert tasks.check_process_and_ext('test.ps1', 'powershell')
-    assert tasks.check_process_and_ext('test.py', 'python')
+    assert tasks.check_process_and_ext('.bat', 'cmd')
+    assert tasks.check_process_and_ext('.ps1', 'powershell')
+    assert tasks.check_process_and_ext('.py', 'python')
     with pytest.raises(Exception) as excinfo:
-        tasks.check_process_and_ext('test.txt', 'cmd')
-    assert "Can\'t run" in str(excinfo.value)
+        tasks.check_process_and_ext('.txt', 'cmd')
+    assert "can't run" in str(excinfo.value)
     with pytest.raises(Exception) as excinfo:
-        tasks.check_process_and_ext('test.py', 'python')
-    assert "Can\'t run" in str(excinfo.value)
+        tasks.check_process_and_ext('.txt', 'python')
+    assert "can't run" in str(excinfo.value)
     with pytest.raises(Exception) as excinfo:
-        tasks.check_process_and_ext('test.txt', 'powershell')
-    assert "Can\'t run" in str(excinfo.value)
+        tasks.check_process_and_ext('.txt', 'powershell')
+    assert "can't run" in str(excinfo.value)
 
 # def test_05_create_encoded_command():
 #     pass

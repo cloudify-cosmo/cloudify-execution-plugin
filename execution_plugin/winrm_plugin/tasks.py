@@ -97,15 +97,13 @@ def get_remote_shell_id(conn):
     '''
     try:
         return conn.open_shell()
-    except (exceptions.WinRMWebServiceError,
+    except (AttributeError,
+            exceptions.WinRMWebServiceError,
             exceptions.TimeoutError,
             exceptions.WinRMAuthorizationError,
             exceptions.UnauthorizedError) as remote_shell_error:
         raise NonRecoverableError('Can\'t create connection. Error: '
                                   '({0})'.format(str(remote_shell_error)))
-    except exceptions.WinRMTransportError as remote_shell_error:
-        raise RecoverableError('Can\'t create connection. Error: '
-                               '({0})'.format(str(remote_shell_error)))
 
 # call it from configure
 def create_script_creation_command(local_file_path, powershell_path,
