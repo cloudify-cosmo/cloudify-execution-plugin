@@ -137,7 +137,8 @@ def define_process_var(process):
     if process is cmd return empty string,
     else returns process for the commands prefix.
     '''
-    process = process.lower()
+    if process:
+        process = process.lower()
     return process if process != 'cmd' else ' '
 
 # call it from configure
