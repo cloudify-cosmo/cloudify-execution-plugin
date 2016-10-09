@@ -105,6 +105,7 @@ def get_remote_shell_id(conn):
         raise NonRecoverableError('Can\'t create connection. Error: '
                                   '({0})'.format(str(remote_shell_error)))
 
+
 # call it from configure
 def create_script_creation_command(local_file_path, powershell_path,
                                    remote_script_file_name):
