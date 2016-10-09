@@ -190,7 +190,7 @@ def create_encoded_command(command):
     try:
         return base64.b64encode(command.encode("utf_16_le"))
     except AttributeError as encoded_command_error:
-        raise NonRecoverableError('command var is None. Error: '
+        raise NonRecoverableError('casserommand var is None. Error: '
                                   '{0}'.format(str(encoded_command_error)))
 
 
