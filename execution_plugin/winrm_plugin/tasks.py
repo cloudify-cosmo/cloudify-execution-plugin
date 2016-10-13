@@ -100,9 +100,11 @@ def get_remote_shell_id(winrm_protocol):
     if winrm env was initialized successfully.
     '''
     try:
-        return winrm_protocol.open_shell()
+        x = winrm_protocol.open_shell()
+        print x
+        return x
     except (AttributeError,
-            # exceptions.WinRMWebServiceError,
+            exceptions.WinRMWebServiceError,
             exceptions.TimeoutError,
             exceptions.WinRMAuthorizationError,
             exceptions.UnauthorizedError) as remote_shell_error:
