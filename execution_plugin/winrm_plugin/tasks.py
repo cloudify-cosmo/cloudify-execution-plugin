@@ -102,7 +102,7 @@ def get_remote_shell_id(winrm_protocol):
     try:
         return winrm_protocol.open_shell()
     except (AttributeError,
-            exceptions.WinRMWebServiceError,
+            # exceptions.WinRMWebServiceError,
             exceptions.TimeoutError,
             exceptions.WinRMAuthorizationError,
             exceptions.UnauthorizedError) as remote_shell_error:
