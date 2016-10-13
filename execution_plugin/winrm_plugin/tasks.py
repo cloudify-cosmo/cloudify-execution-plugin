@@ -101,7 +101,7 @@ def get_remote_shell_id(winrm_protocol):
     '''
     try:
         x = winrm_protocol.open_shell()
-        print x
+        print (x)
         return x
     except (AttributeError,
             exceptions.WinRMWebServiceError,
