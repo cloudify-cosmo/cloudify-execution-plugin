@@ -15,88 +15,92 @@ from cloudify.exceptions import RecoverableError
 @operation
 def run_script(address, username, password, process, local_file_path,
                delete_after_running=True, remote_script_path=None,
-               winrm_port=5985, winrm_protocol="http", **kwargs):
+               winrm_port=5985, transfer_protocol="http", **kwargs):
 
     '''function to run winrm script over remote machine,
     winrm env vars are required(user, password, protocol, port, etc).
     adress = ??, local file path = the script?
     delete after running and remote script path...
     '''
-
     file_ext = os.path.splitext(local_file_path)[1]
     remote_script_file_name = "\\script" + os.path.splitext(local_file_path)[1]
 
-    conn = get_conn(winrm_protocol, address, password, username, winrm_port)
-    remote_shell_id = get_remote_shell_id(conn)
+    # creates the protocol and the shell_id
+    winrm_protocol = get_winrm_protocol(transfer_protocol, address, password, username, winrm_port)
+    remote_shell_id = get_remote_shell_id(winrm_protocol)
 
+    # define process
+    if process == 'cmd':
+        process = ' '
+
+    # processing script path
     powershell_path = define_script_path(remote_script_path, False)
-    encoded_script = create_script_creation_command(
-            local_file_path, powershell_path, remote_script_file_name)
+    copy_script_command = create_copy_script_command(local_file_path, powershell_path, remote_script_file_name)
     cmd_path = define_script_path(remote_script_path)
+
+    # verifying script destination exists
     check_process_and_ext(file_ext, process)
-    path_check = check_remote_path(remote_shell_id, cmd_path, conn)
+    path_check = check_remote_path(remote_shell_id, cmd_path, winrm_protocol)
 
     if path_check:
         ctx.logger.info('Copying script file on remote machine')
-        run_remote_command(remote_shell_id, 'powershell', '-encodedcommand',
-                           ' {0}'.format(encoded_script), conn)
-        process = define_process_var(process)
+        run_remote_command(remote_shell_id, 'powershell', '-encodedcommand', ' {0}'.format(copy_script_command), winrm_protocol)
+
         ctx.logger.info('Running the script on remote machine')
-        run_remote_command(remote_shell_id, process, cmd_path,
-                           remote_script_file_name, conn)
+        run_remote_command(remote_shell_id, process, cmd_path, remote_script_file_name, winrm_protocol)
+
         if delete_after_running:
             ctx.logger.info('Removing script file from remote machine')
-            run_remote_command(remote_shell_id, 'del', cmd_path,
-                               remote_script_file_name, conn)
+            run_remote_command(remote_shell_id, 'del', cmd_path, remote_script_file_name, winrm_protocol)
     else:
-        raise NonRecoverableError('Path {0} or {1} does not exist'
-                                  .format(cmd_path, powershell_path))
+        raise NonRecoverableError('Path {0} or {1} does not exist'.format(cmd_path, powershell_path))
 
 
 # this is run multi commands
 @operation
 def run_commands(commands, address, username, password,
-                 process, winrm_port=5985, winrm_protocol='http', **kwargs):
+                 process, winrm_port=5985, transfer_protocol='http', **kwargs):
     '''
     function for running direct command via cmd.
     env var are required
     '''
-    conn = get_conn(winrm_protocol, address, password, username, winrm_port)
-    remote_shell_id = get_remote_shell_id(conn)
+    # creates the protocol and the shell_id
+    winrm_protocol = get_winrm_protocol(transfer_protocol, address, password, username, winrm_port)
+    remote_shell_id = get_remote_shell_id(winrm_protocol)
 
-    process = define_process_var(process)
+    if process == 'cmd':
+        process = ' '
+
+    # running command each command with the correct process.
     if process == 'powershell':
         for command in commands:
             encode_command = create_encoded_command(command)
             ctx.logger.info('running command: {0}'.format(command))
-            # where is remote_shell_id from?
-            run_remote_command(remote_shell_id, process, '-encodedcommand',
-                               ' {0}'.format(encode_command), conn)
+            run_remote_command(remote_shell_id, process, '-encodedcommand ', encode_command, winrm_protocol)
     else:
         for command in commands:
             ctx.logger.info('running command: {0}'.format(command))
-            run_remote_command(remote_shell_id, process, '',
-                               ' {0}'.format(command), conn)
+            run_remote_command(remote_shell_id, process, ' ', command, winrm_protocol)
 
 
 # call it configure - get inputs and generate environment, including process.
-def get_conn(winrm_protocol, address, password, username, winrm_port):
+def get_winrm_protocol(transfer_protocol, address, password, username, winrm_port):
     '''
     generation winrm environment. from username inputs to winrm protocol.
     '''
-    endpoint = '{0}://{1}:{2}/wsman'.format(winrm_protocol, address,
+    endpoint = '{0}://{1}:{2}/wsman'.format(transfer_protocol, address,
                                             winrm_port)
     return winrm.Protocol(endpoint=endpoint, transport='plaintext',
                           username=username, password=password)
 
 # call it from configure
-def get_remote_shell_id(conn):
+def get_remote_shell_id(winrm_protocol):
     '''
     return shell id for winrm commands,
     if winrm env was initialized successfully.
     '''
     try:
-        return conn.open_shell()
+        return winrm_protocol.open_shell()
     except (AttributeError,
             exceptions.WinRMWebServiceError,
             exceptions.TimeoutError,
@@ -107,7 +111,7 @@ def get_remote_shell_id(conn):
 
 
 # call it from configure
-def create_script_creation_command(local_file_path, powershell_path,
+def create_copy_script_command(local_file_path, powershell_path,
                                    remote_script_file_name):
     '''
     generating a valid script from script file using windows stream writer.
@@ -130,15 +134,6 @@ def create_script_creation_command(local_file_path, powershell_path,
         script_creator_cmd_prefix + script_content + script_creator_cmd_suffix
     return base64.b64encode(command.encode("utf_16_le"))
 
-# call it from configure
-def define_process_var(process):
-    '''
-    if process is cmd return empty string,
-    else returns process for the commands prefix.
-    '''
-    if process:
-        process = process.lower()
-    return process if process != 'cmd' else ' '
 
 # call it from configure
 def check_process_and_ext(file_ext, process):
@@ -161,18 +156,15 @@ def check_process_and_ext(file_ext, process):
 
 
 #  this is run command
-def run_remote_command(remote_shell_id, process, cmd_path,
-                       remote_script_file_name, conn):
+def run_remote_command(remote_shell_id, process, flags,
+                       command_or_script, winrm_protocol):
     '''
     running the command.
     '''
     try:
-        command_id = conn.run_command(
-            remote_shell_id, '{0} {1}{2}'.format(process, cmd_path,
-                                                 remote_script_file_name))
-        stdout, stderr, return_code = conn.get_command_output(remote_shell_id,
-                                                              command_id)
-        conn.cleanup_command(remote_shell_id, command_id)
+        command_id = winrm_protocol.run_command(remote_shell_id, '{0} {1}{2}'.format(process, flags, command_or_script))
+        stdout, stderr, return_code = winrm_protocol.get_command_output(remote_shell_id, command_id)
+        winrm_protocol.cleanup_command(remote_shell_id, command_id)
         if stdout:
             ctx.logger.info('STDOUT: {0}'.format(stdout))
         if stderr:
@@ -204,15 +196,15 @@ def define_script_path(remote_script_path, is_cmd=True):
     return remote_script_path if remote_script_path else tmp_env_var
 
 
-def check_remote_path(remote_shell_id, cmd_path, conn):
+def check_remote_path(remote_shell_id, cmd_path, winrm_protocol):
 
     try:
-        command_id = conn.run_command(remote_shell_id,
+        command_id = winrm_protocol.run_command(remote_shell_id,
                                       'IF EXIST {0} (ECHO 1) '
                                       'ELSE (ECHO 0)'.format(cmd_path))
-        stdout, stderr, return_code = conn.get_command_output(remote_shell_id,
+        stdout, stderr, return_code = winrm_protocol.get_command_output(remote_shell_id,
                                                               command_id)
-        conn.cleanup_command(remote_shell_id, command_id)
+        winrm_protocol.cleanup_command(remote_shell_id, command_id)
         return True if int(stdout) == 1 else False
     except exceptions.WinRMTransportError as remote_run_error:
         raise RecoverableError('Can\'t run remote command. Error: '

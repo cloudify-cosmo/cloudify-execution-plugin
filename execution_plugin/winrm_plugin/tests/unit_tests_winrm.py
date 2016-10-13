@@ -20,12 +20,12 @@ ENDPOINT = os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
 
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
-def test_01_get_conn():
+def test_01_get_winrm_protocol():
     '''
     creating right and wrong protocol and verifying results
     '''
-    tasks.get_conn('http', 'localhost', PASSWORD, USER, '5985')
-    tasks.get_conn('http', None, PASSWORD, USER, '5985')
+    tasks.get_winrm_protocol('http', 'localhost', PASSWORD, USER, '5985')
+    tasks.get_winrm_protocol('http', None, PASSWORD, USER, '5985')
 
 def test_02_get_remote_shell_id(protocol_fake):
     '''
@@ -39,12 +39,7 @@ def test_02_get_remote_shell_id(protocol_fake):
         tasks.get_remote_shell_id(None)
     assert "Can't create connection. Error:" in str(excinfo.value)
 
-def test_03_define_process_var():
-    assert tasks.define_process_var('cmd') == ' '
-    assert tasks.define_process_var('ps') == 'ps'
-    assert tasks.define_process_var(None) is None
-
-def test_04_check_process_and_ext():
+def test_03_check_process_and_ext():
     assert tasks.check_process_and_ext('.bat', 'cmd')
     assert tasks.check_process_and_ext('.ps1', 'powershell')
     assert tasks.check_process_and_ext('.py', 'python')
@@ -58,10 +53,10 @@ def test_04_check_process_and_ext():
         tasks.check_process_and_ext('.txt', 'powershell')
     assert "can't run" in str(excinfo.value)
 
-# def test_05_create_encoded_command():
+# def test_04_create_encoded_command():
 #     pass
 
-def test_06_define_script_path():
+def test_05_define_script_path():
     assert tasks.define_script_path(None) == '%TEMP%'
     assert tasks.define_script_path(None, is_cmd=False) == '$env:TEMP'
     assert tasks.define_script_path('echo test') == 'echo test'
