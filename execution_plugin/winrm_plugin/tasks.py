@@ -145,7 +145,7 @@ def check_process_and_ext(file_ext, process):
     powershell = True if process == 'powershell' and file_ext == '.ps1' \
         else False
     python = True if process == 'python' and file_ext == '.py' else False
-    cmd = True if process == ' ' and file_ext == '.bat' else False
+    cmd = True if (process == ' ' or process == 'cmd') and file_ext == '.bat' else False
     if powershell or python or cmd:
         return True
     else:
