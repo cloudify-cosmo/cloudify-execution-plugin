@@ -11,3 +11,7 @@ coverage==3.7.1
 pytest
 pytest-cov
 pytest-pep8
+pytest-mock
+fixture
+mock
+testfixtures
