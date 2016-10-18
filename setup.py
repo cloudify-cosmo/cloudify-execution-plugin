@@ -30,5 +30,6 @@ setup(
         'six>=1.8.0',
         'pywinrm',
         'pytest',
+        'pytest-mock'
     ]
 )
