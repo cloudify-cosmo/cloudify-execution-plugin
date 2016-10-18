@@ -31,7 +31,7 @@ def test_01_run_remote_command(protocol_real):
     protocol_real.close_shell(shell_id)
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
-@patch('execution_plugin.winrm_plugin.tasks.get_winrm_protocol', return_value=protocol_real)
+@patch('execution_plugin.winrm_plugin.tasks.get_winrm_protocol', return_value=protocol_real())
 def test_02_run_script(get_winrm_protocol):
     tasks.run_script('http://localhost:5985/wsman', 'Administrator', 'Aa123456', 'powershell', os.path.join('scripts', 'test.ps1'))
     tasks.run_script('http://localhost:5985/wsman', 'Administrator', 'Aa123456', 'cmd', os.path.join('scripts', 'test.bat'))
