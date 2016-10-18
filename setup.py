@@ -32,7 +32,6 @@ setup(
         'pytest',
         'pytest-mock',
         'fixture',
-        'mock',
         'testfixtures'
     ]
 )
