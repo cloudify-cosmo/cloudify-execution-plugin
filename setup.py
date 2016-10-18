@@ -31,5 +31,6 @@ setup(
         'pywinrm',
         'pytest',
         'pytest-mock'
+        'fixture'
     ]
 )
