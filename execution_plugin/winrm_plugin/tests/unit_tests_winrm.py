@@ -37,7 +37,7 @@ def test_02_get_remote_shell_id(protocol_fake):
 
     with pytest.raises(Exception) as excinfo:
         tasks.get_remote_shell_id(None)
-    assert "AttributeError" in str(excinfo.value)
+    assert "module" in str(excinfo.value)
 
 def test_03_check_process_and_ext():
     assert tasks.check_process_and_ext('.bat', 'cmd')
