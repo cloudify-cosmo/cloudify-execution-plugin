@@ -35,10 +35,13 @@ def test_02_run_script(protocol_real, mocker):
     mocker.patch('execution_plugin.winrm_plugin.tasks.get_winrm_protocol', return_value=protocol_real)
     tasks.run_script('http://localhost:5985/wsman', 'Administrator', 'Aa123456', 'powershell', os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.ps1'))
     tasks.run_script('http://localhost:5985/wsman', 'Administrator', 'Aa123456', 'cmd', os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.bat'))
-#
-# def test_03_run_commands():
-#     pass
-#
+
+@patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
+def test_03_run_commands(protocol_real, mocker):
+    mocker.patch('execution_plugin.winrm_plugin.tasks.get_winrm_protocol', return_value=protocol_real)
+    tasks.run_commands(['echo test', 'dir'], 'http://localhost:5985/wsman', 'Administrator', 'Aa123456', 'powershell')
+    tasks.run_commands(['echo test', 'dir'], 'http://localhost:5985/wsman', 'Administrator', 'Aa123456', 'cmd')
+##
 # def test_04_get_remote_shell_id():
 #     pass
 #
