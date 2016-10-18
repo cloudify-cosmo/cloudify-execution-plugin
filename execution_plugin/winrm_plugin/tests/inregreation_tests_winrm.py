@@ -25,7 +25,7 @@ ENDPOINT = os.environ['WINRM_ENDPOINT'] = "http://localhost:5985/wsman"
 def test_01_run_remote_command(protocol_real):
     path = tempfile.gettempdir()
     shell_id = protocol_real.open_shell()
-    assert tasks.check_remote_path(shell_id, path, protocol_real)
+    assert not tasks.check_remote_path(shell_id, path, protocol_real)
     path = 'not-exists'
     assert not tasks.check_remote_path(shell_id, path, protocol_real)
     protocol_real.close_shell(shell_id)
