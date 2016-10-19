@@ -210,4 +210,3 @@ def check_remote_path(remote_shell_id, cmd_path, winrm_protocol):
         raise RecoverableError('Can\'t run remote command. Error: '
                                '({0})'.format(str(remote_run_error)))
 
-
