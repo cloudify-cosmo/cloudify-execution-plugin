@@ -45,10 +45,14 @@ def test_03_run_commands(protocol_real, mocker):
 def test_04_get_remote_shell_id(protocol_real):
     shell_id = tasks.get_remote_shell_id(protocol_real)
     print(shell_id)
+    protocol_real.close_shell(shell_id)
 
-#
-# def test_05_create_script_creation_command():
-#     pass
-#
-# def test_06_run_remote_command():
-#     pass
+def test_05_create_copy_script_command():
+    tasks.create_copy_script_command(os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.ps1'), 'C:\\Desktop\\scripts\\', 'test.ps1')
+    tasks.create_copy_script_command(os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.bat'), 'C:\\Desktop\\scripts\\', 'test.bat')
+
+def test_06_run_remote_command(protocol_real):
+    shell_id = tasks.get_remote_shell_id(protocol_real)
+    tasks.run_remote_command(shell_id, 'powershell', '', 'echo test', 'http')
+    tasks.run_remote_command(shell_id, 'cmd', '', 'echo test', 'http')
+    protocol_real.close_shell(shell_id)
