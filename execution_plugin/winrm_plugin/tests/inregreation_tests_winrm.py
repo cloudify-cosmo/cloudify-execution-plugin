@@ -52,6 +52,6 @@ def test_04_get_remote_shell_id(protocol_real):
 def test_05_run_remote_command(protocol_real):
     shell_id = tasks.get_remote_shell_id(protocol_real)
     tasks.run_remote_command(shell_id, 'powershell', '', 'echo test', protocol_real)
-    tasks.run_remote_command(shell_id, 'cmd', '', 'echo test', protocol_real)
+    tasks.run_remote_command(shell_id, '', '', 'echo test', protocol_real)
     protocol_real.close_shell(shell_id)
 
