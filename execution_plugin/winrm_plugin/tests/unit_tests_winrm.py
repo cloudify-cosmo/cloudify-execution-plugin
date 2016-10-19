@@ -61,3 +61,7 @@ def test_05_define_script_path():
     assert tasks.define_script_path(None, is_cmd=False) == '$env:TEMP'
     assert tasks.define_script_path('echo test') == 'echo test'
     assert tasks.define_script_path('echo test', is_cmd=False) == 'echo test'
+
+def test_06_create_copy_script_command():
+    tasks.create_copy_script_command(os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.ps1'), 'C:\\Desktop\\scripts\\', 'test.ps1')
+    tasks.create_copy_script_command(os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.bat'), 'C:\\Desktop\\scripts\\', 'test.bat')
