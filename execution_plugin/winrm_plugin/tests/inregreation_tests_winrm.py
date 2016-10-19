@@ -53,7 +53,7 @@ def test_05_create_copy_script_command():
 
 def test_06_run_remote_command(protocol_real):
     shell_id = tasks.get_remote_shell_id(protocol_real)
-    tasks.run_remote_command(shell_id, 'powershell', '', 'echo test', 'http')
-    tasks.run_remote_command(shell_id, 'cmd', '', 'echo test', 'http')
+    tasks.run_remote_command(shell_id, 'powershell', '', 'echo test', protocol_real)
+    tasks.run_remote_command(shell_id, 'cmd', '', 'echo test', protocol_real)
     protocol_real.close_shell(shell_id)
 
