@@ -51,10 +51,10 @@ def test_05_create_copy_script_command():
     tasks.create_copy_script_command(os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.ps1'), 'C:\\Desktop\\scripts\\', 'test.ps1')
     tasks.create_copy_script_command(os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.bat'), 'C:\\Desktop\\scripts\\', 'test.bat')
 
-# @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
-# def test_06_run_remote_command(protocol_real):
-#     shell_id = tasks.get_remote_shell_id(protocol_real)
-#     tasks.run_remote_command(shell_id, 'powershell', '', 'echo test', protocol_real)
-#     tasks.run_remote_command(shell_id, 'cmd', '', 'echo test', protocol_real)
-#     protocol_real.close_shell(shell_id)
+@patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
+def test_06_run_remote_command(protocol_real):
+    shell_id = tasks.get_remote_shell_id(protocol_real)
+    tasks.run_remote_command(shell_id, 'powershell', '', 'echo test', protocol_real)
+    tasks.run_remote_command(shell_id, 'cmd', '', 'echo test', protocol_real)
+    protocol_real.close_shell(shell_id)
 
