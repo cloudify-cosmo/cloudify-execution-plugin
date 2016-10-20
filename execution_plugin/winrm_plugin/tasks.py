@@ -173,7 +173,7 @@ def run_remote_command(remote_shell_id, process, flags,
         ctx.logger.error('Can\'t run remote command. Error: '
                          '({0})'.format(str(remote_run_error)))
         # TODO: raise NonRecoverable but talk to Nir first to confirm
-
+    return stdout, stderr, return_code
 
 def create_encoded_command(command):
     '''
