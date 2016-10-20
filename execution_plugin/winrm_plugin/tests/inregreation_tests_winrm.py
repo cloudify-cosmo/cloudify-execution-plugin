@@ -51,11 +51,11 @@ def test_04_get_remote_shell_id(protocol_real):
 def test_05_run_remote_command(protocol_real):
     shell_id = tasks.get_remote_shell_id(protocol_real)
     stdout, stderr, return_code = tasks.run_remote_command(shell_id, 'powershell', '', 'echo test', protocol_real)
-    assert stdout == 'test'
+    assert stdout == 'test\r'
     assert stderr == 0
     assert return_code == 0
     stdout, stderr, return_code = tasks.run_remote_command(shell_id, '', '', 'echo test', protocol_real)
-    assert stdout == 'test'
+    assert stdout == 'test\r'
     assert stderr == 0
     assert return_code == 0
     protocol_real.close_shell(shell_id)
