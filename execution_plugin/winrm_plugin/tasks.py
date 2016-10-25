@@ -47,7 +47,7 @@ def run_script(address, username, password, process, local_file_path,
         run_remote_command(remote_shell_id, 'powershell', '-encodedcommand', ' {0}'.format(copy_script_command), winrm_protocol)
 
         ctx.logger.info('Running the script on remote machine')
-        run_remote_command(remote_shell_id, process, cmd_path, remote_script_file_name, winrm_protocol)
+        stdout, stderr, return_code = run_remote_command(remote_shell_id, process, cmd_path, remote_script_file_name, winrm_protocol)
 
         if delete_after_running:
             ctx.logger.info('Removing script file from remote machine')
@@ -55,6 +55,7 @@ def run_script(address, username, password, process, local_file_path,
     else:
         raise NonRecoverableError('Path {0} or {1} does not exist'.format(cmd_path, powershell_path))
 
+    return stdout, stderr, return_code
 
 # this is run multi commands
 @operation
@@ -71,17 +72,23 @@ def run_commands(commands, address, username, password,
     if process == 'cmd':
         process = ' '
 
+    commands_results = []
     # running command each command with the correct process.
     if process == 'powershell':
         for command in commands:
             encode_command = create_encoded_command(command)
             ctx.logger.info('running command: {0}'.format(command))
-            run_remote_command(remote_shell_id, process, '-encodedcommand ', encode_command, winrm_protocol)
+            stdout, stderr, return_code = run_remote_command(remote_shell_id, process, '-encodedcommand ', encode_command, winrm_protocol)
+            result = (stdout, stderr, return_code)
+            commands_results.append(result)
     else:
         for command in commands:
             ctx.logger.info('running command: {0}'.format(command))
-            run_remote_command(remote_shell_id, process, ' ', command, winrm_protocol)
+            stdout, stderr, return_code = run_remote_command(remote_shell_id, process, ' ', command, winrm_protocol)
+            result = (stdout, stderr, return_code)
+            commands_results.append(result)
 
+    return commands_results
 
 # call it configure - get inputs and generate environment, including process.
 def get_winrm_protocol(transfer_protocol, address, password, username, winrm_port):
