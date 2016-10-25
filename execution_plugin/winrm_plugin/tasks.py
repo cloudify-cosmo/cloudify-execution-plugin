@@ -204,7 +204,8 @@ def define_script_path(remote_script_path, is_cmd=True):
 
 
 def check_remote_path(remote_shell_id, cmd_path, winrm_protocol):
-
+    if not remote_shell_id or not winrm_protocol:
+        raise RecoverableError('Can\'t run remote command, wrong parameters')
     try:
         command_id = winrm_protocol.run_command(remote_shell_id,
                                       'IF EXIST {0} (ECHO 1) '
