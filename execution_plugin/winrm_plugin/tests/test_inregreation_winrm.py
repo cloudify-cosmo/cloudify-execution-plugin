@@ -56,7 +56,7 @@ def test_03_run_commands(protocol_real, mocker):
                        'Administrator', 'Aa123456', 'cmd')
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
-def test_04_run_script_fails():
+def test_04_run_commands_fails():
     with pytest.raises(Exception) as excinfo:
         tasks.run_commands(None, None, None, None, 'cmd')
     assert "wrong parameters" in str(excinfo.value)
