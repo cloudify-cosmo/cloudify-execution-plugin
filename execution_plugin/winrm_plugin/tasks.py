@@ -22,7 +22,7 @@ def run_script(address, username, password, process, local_file_path,
     adress = ??, local file path = the script?
     delete after running and remote script path...
     '''
-    if not address or not username or not password or os.path.isfile(local_file_path):
+    if not address or not username or not password: #or os.path.isfile(local_file_path):
         raise RecoverableError('Can\'t run script, wrong parameters')
     if process not in ['cmd', 'python', 'powershell']:
         raise RecoverableError('Can\'t run script, only cmd, python and powershell are supported currently0')
