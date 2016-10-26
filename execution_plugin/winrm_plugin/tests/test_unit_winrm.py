@@ -1,10 +1,5 @@
 import os
-import shutil
-import base64
-from idlelib import PyShell
-import unittest
-import tempfile
-from winrm.tests.conftest import protocol_fake, protocol_real
+from winrm.tests.conftest import protocol_fake
 
 from mock import patch
 import pytest
@@ -63,5 +58,12 @@ def test_05_define_script_path():
     assert tasks.define_script_path('echo test', is_cmd=False) == 'echo test'
 
 def test_06_create_copy_script_command():
-    tasks.create_copy_script_command(os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.ps1'), 'C:\\Desktop\\scripts\\', 'test.ps1')
-    tasks.create_copy_script_command(os.path.join('execution_plugin', 'winrm_plugin', 'tests', 'scripts', 'test.bat'), 'C:\\Desktop\\scripts\\', 'test.bat')
+    tasks.create_copy_script_command(os.path.join('execution_plugin',
+                                                  'winrm_plugin', 'tests',
+                                                  'scripts', 'test.ps1'),
+                                     'C:\\Desktop\\scripts\\', 'test.ps1')
+    tasks.create_copy_script_command(os.path.join('execution_plugin',
+                                                  'winrm_plugin',
+                                                  'tests',
+                                                  'scripts','test.bat'),
+                                     'C:\\Desktop\\scripts\\', 'test.bat')

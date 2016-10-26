@@ -22,16 +22,19 @@ def run_script(address, username, password, process, local_file_path,
     adress = ??, local file path = the script?
     delete after running and remote script path...
     '''
-    if not address or not username or not password: #or os.path.isfile(local_file_path):
+    if not address or not username or not password:
+    #or os.path.isfile(local_file_path):
         raise RecoverableError('Can\'t run script, wrong parameters')
     if process not in ['cmd', 'python', 'powershell']:
-        raise RecoverableError('Can\'t run script, only cmd, python and powershell are supported currently')
+        raise RecoverableError('''Can\'t run script, only cmd,
+         python and powershell are supported currently''')
 
     file_ext = os.path.splitext(local_file_path)[1]
-    remote_script_file_name = "\\script" + os.path.splitext(local_file_path)[1]
+    remote_script_filename = "\\script" + os.path.splitext(local_file_path)[1]
 
     # creates the protocol and the shell_id
-    winrm_protocol = get_winrm_protocol(transfer_protocol, address, password, username, winrm_port)
+    winrm_protocol = get_winrm_protocol(transfer_protocol, address, password,
+                                        username, winrm_port)
     remote_shell_id = get_remote_shell_id(winrm_protocol)
 
     # define process
@@ -40,7 +43,9 @@ def run_script(address, username, password, process, local_file_path,
 
     # processing script path
     powershell_path = define_script_path(remote_script_path, False)
-    copy_script_command = create_copy_script_command(local_file_path, powershell_path, remote_script_file_name)
+    copy_script_command = create_copy_script_command(local_file_path,
+                                                     powershell_path,
+                                                     remote_script_filename)
     cmd_path = define_script_path(remote_script_path)
 
     # verifying script destination exists
@@ -49,20 +54,25 @@ def run_script(address, username, password, process, local_file_path,
 
     if path_check:
         ctx.logger.info('Copying script file on remote machine')
-        run_remote_command(remote_shell_id, 'powershell', '-encodedcommand', ' {0}'.format(copy_script_command), winrm_protocol)
+        run_remote_command(remote_shell_id, 'powershell', '-encodedcommand',
+                           ' {0}'.format(copy_script_command), winrm_protocol)
 
         ctx.logger.info('Running the script on remote machine')
-        stdout, stderr, return_code = run_remote_command(remote_shell_id, process, cmd_path, remote_script_file_name, winrm_protocol)
+        stdout, stderr, return_code = run_remote_command(remote_shell_id,
+                                                         process, cmd_path,
+                                                         remote_script_filename,
+                                                         winrm_protocol)
 
         if delete_after_running:
             ctx.logger.info('Removing script file from remote machine')
-            run_remote_command(remote_shell_id, 'del', cmd_path, remote_script_file_name, winrm_protocol)
+            run_remote_command(remote_shell_id, 'del', cmd_path,
+                               remote_script_filename, winrm_protocol)
     else:
-        raise NonRecoverableError('Path {0} or {1} does not exist'.format(cmd_path, powershell_path))
+        raise NonRecoverableError('Path {0} or {1} does not exist'.format(
+            cmd_path, powershell_path))
 
     return stdout, stderr, return_code
 
-# this is run multi commands
 @operation
 def run_commands(commands, address, username, password,
                  process, winrm_port=5985, transfer_protocol='http', **kwargs):
@@ -71,12 +81,15 @@ def run_commands(commands, address, username, password,
     env var are required
     '''
     # creates the protocol and the shell_id
-    if not address or not username or not password or type(commands) is not list:
-        raise RecoverableError('Can\'t run command, wrong parameters')
+    if not address or not username or not password or\
+       type(commands) is not list:
+            raise RecoverableError('Can\'t run command, wrong parameters')
     if process not in ['cmd', 'python', 'powershell']:
-        raise RecoverableError('Can\'t run script, only cmd, python and powershell are supported currently')
+        raise RecoverableError('''Can\'t run script, only cmd,
+         python and powershell are supported currently''')
 
-    winrm_protocol = get_winrm_protocol(transfer_protocol, address, password, username, winrm_port)
+    winrm_protocol = get_winrm_protocol(transfer_protocol, address, password,
+                                        username, winrm_port)
     remote_shell_id = get_remote_shell_id(winrm_protocol)
 
     if process == 'cmd':
@@ -88,20 +101,27 @@ def run_commands(commands, address, username, password,
         for command in commands:
             encode_command = create_encoded_command(command)
             ctx.logger.info('running command: {0}'.format(command))
-            stdout, stderr, return_code = run_remote_command(remote_shell_id, process, '-encodedcommand ', encode_command, winrm_protocol)
+            stdout, stderr, return_code = run_remote_command(remote_shell_id,
+                                                             process,
+                                                             '-encodedcommand ',
+                                                             encode_command,
+                                                             winrm_protocol)
             result = (stdout, stderr, return_code)
             commands_results.append(result)
     else:
         for command in commands:
             ctx.logger.info('running command: {0}'.format(command))
-            stdout, stderr, return_code = run_remote_command(remote_shell_id, process, ' ', command, winrm_protocol)
+            stdout, stderr, return_code = run_remote_command(remote_shell_id,
+                                                             process, ' ',
+                                                             command,
+                                                             winrm_protocol)
             result = (stdout, stderr, return_code)
             commands_results.append(result)
 
     return commands_results
 
-# call it configure - get inputs and generate environment, including process.
-def get_winrm_protocol(transfer_protocol, address, password, username, winrm_port):
+def get_winrm_protocol(transfer_protocol, address, password, username,
+                       winrm_port):
     '''
     generation winrm environment. from username inputs to winrm protocol.
     '''
@@ -110,7 +130,6 @@ def get_winrm_protocol(transfer_protocol, address, password, username, winrm_por
     return winrm.Protocol(endpoint=endpoint, transport='plaintext',
                           username=username, password=password)
 
-# call it from configure
 def get_remote_shell_id(winrm_protocol):
     '''
     return shell id for winrm commands,
@@ -127,7 +146,6 @@ def get_remote_shell_id(winrm_protocol):
                                   '({0})'.format(str(remote_shell_error)))
 
 
-# call it from configure
 def create_copy_script_command(local_file_path, powershell_path,
                                    remote_script_file_name):
     '''
@@ -152,7 +170,6 @@ def create_copy_script_command(local_file_path, powershell_path,
     return base64.b64encode(command.encode("utf_16_le"))
 
 
-# call it from configure
 def check_process_and_ext(file_ext, process):
     '''
     verifying that process type and scripts format matches.
@@ -162,7 +179,8 @@ def check_process_and_ext(file_ext, process):
     powershell = True if process == 'powershell' and file_ext == '.ps1' \
         else False
     python = True if process == 'python' and file_ext == '.py' else False
-    cmd = True if (process == ' ' or process == 'cmd') and file_ext == '.bat' else False
+    cmd = True if (process == ' ' or process == 'cmd') and \
+        file_ext == '.bat' else False
     if powershell or python or cmd:
         return True
     else:
@@ -172,15 +190,17 @@ def check_process_and_ext(file_ext, process):
 
 
 
-#  this is run command
 def run_remote_command(remote_shell_id, process, flags,
                        command_or_script, winrm_protocol):
     '''
     running the command.
     '''
     try:
-        command_id = winrm_protocol.run_command(remote_shell_id, '{0} {1}{2}'.format(process, flags, command_or_script))
-        stdout, stderr, return_code = winrm_protocol.get_command_output(remote_shell_id, command_id)
+        command_id = winrm_protocol.run_command(
+            remote_shell_id, '{0} {1}{2}'.format(process, flags,
+                                                 command_or_script))
+        stdout, stderr, return_code = winrm_protocol.get_command_output(
+            remote_shell_id, command_id)
         winrm_protocol.cleanup_command(remote_shell_id, command_id)
         if stdout:
             ctx.logger.info('STDOUT: {0}'.format(stdout))
@@ -203,8 +223,6 @@ def create_encoded_command(command):
                                   '{0}'.format(str(encoded_command_error)))
 
 
-
-# need to refactor this func to default script path which is synchronized with fabric.
 def define_script_path(remote_script_path, is_cmd=True):
     '''
     if user input for script destination path is None - return default temp.
@@ -220,8 +238,8 @@ def check_remote_path(remote_shell_id, cmd_path, winrm_protocol):
         command_id = winrm_protocol.run_command(remote_shell_id,
                                       'IF EXIST {0} (ECHO 1) '
                                       'ELSE (ECHO 0)'.format(cmd_path))
-        stdout, stderr, return_code = winrm_protocol.get_command_output(remote_shell_id,
-                                                              command_id)
+        stdout, stderr, return_code = winrm_protocol.get_command_output(
+            remote_shell_id, command_id)
         winrm_protocol.cleanup_command(remote_shell_id, command_id)
         return True if int(stdout) == 1 else False
     except exceptions.WinRMTransportError as remote_run_error:
