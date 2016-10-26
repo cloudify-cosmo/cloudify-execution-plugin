@@ -65,7 +65,7 @@ def test_04_run_commands_fails():
     assert "wrong parameters" in str(excinfo.value)
     with pytest.raises(Exception) as excinfo:
         tasks.run_commands('a', 'b', 'c', 'd', 'test')
-    assert "Can\'t run script" in str(excinfo.value)
+    assert "Can\'t run command" in str(excinfo.value)
 
 def test_05_get_remote_shell_id(protocol_real):
     shell_id = tasks.get_remote_shell_id(protocol_real)
