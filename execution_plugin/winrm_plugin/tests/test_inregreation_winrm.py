@@ -35,6 +35,18 @@ def test_01_run_script(protocol_real, mocker):
                                          'tests', 'scripts', 'test.bat'))
 
 @patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
+def test_05_run_script_fails(protocol_real):
+    with pytest.raises(Exception) as excinfo:
+        tasks.run_script(None, None, None, None, 'cmd')
+    assert "wrong parameters" in str(excinfo.value)
+    with pytest.raises(Exception) as excinfo:
+        tasks.run_script('', '', '', '', 'cmd')
+    assert "wrong parameters" in str(excinfo.value)
+    with pytest.raises(Exception) as excinfo:
+        tasks.run_script('a', 'b', 'c', 'd', 'test')
+    assert "Can\'t run script" in str(excinfo.value)
+
+@patch('execution_plugin.winrm_plugin.tasks.ctx', MockCloudifyContext())
 def test_02_run_commands(protocol_real, mocker):
     mocker.patch('execution_plugin.winrm_plugin.tasks.get_winrm_protocol',
                  return_value=protocol_real)
@@ -45,7 +57,6 @@ def test_02_run_commands(protocol_real, mocker):
 
 def test_03_get_remote_shell_id(protocol_real):
     shell_id = tasks.get_remote_shell_id(protocol_real)
-    print(shell_id)
     protocol_real.close_shell(shell_id)
 
 
