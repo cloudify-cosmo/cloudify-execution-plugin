@@ -25,7 +25,7 @@ def run_script(address, username, password, process, local_file_path,
     if not address or not username or not password: #or os.path.isfile(local_file_path):
         raise RecoverableError('Can\'t run script, wrong parameters')
     if process not in ['cmd', 'python', 'powershell']:
-        raise RecoverableError('Can\'t run script, only cmd, python and powershell are supported currently0')
+        raise RecoverableError('Can\'t run script, only cmd, python and powershell are supported currently')
 
     file_ext = os.path.splitext(local_file_path)[1]
     remote_script_file_name = "\\script" + os.path.splitext(local_file_path)[1]
@@ -71,9 +71,10 @@ def run_commands(commands, address, username, password,
     env var are required
     '''
     # creates the protocol and the shell_id
-    if not address or not username or not password or process not in ['cmd', 'python', 'powershell'] or type(commands) is not list:
+    if not address or not username or not password or type(commands) is not list:
         raise RecoverableError('Can\'t run command, wrong parameters')
-
+    if process not in ['cmd', 'python', 'powershell']:
+        raise RecoverableError('Can\'t run script, only cmd, python and powershell are supported currently')
 
     winrm_protocol = get_winrm_protocol(transfer_protocol, address, password, username, winrm_port)
     remote_shell_id = get_remote_shell_id(winrm_protocol)
